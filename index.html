@@ -359,6 +359,18 @@
   }
   .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;border-left:5px solid var(--ok);opacity:0;pointer-events:none;transition:.25s;z-index:99}
   .toast.show{opacity:1}.toast.err{border-left-color:var(--danger)}
+
+  /* ---------- acceso al panel de gestión ---------- */
+  #loginGate{display:none;min-height:100vh;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#0d0d0d,#242424)}
+  #loginGate .login-card{width:100%;max-width:440px;background:#fff;border-radius:16px;padding:32px;box-shadow:0 10px 0 var(--yellow)}
+  #loginGate .login-brand{font:700 28px 'Oswald';text-transform:uppercase;color:var(--black);margin-bottom:6px}
+  #loginGate .login-brand span{color:#a88a00}
+  #loginGate p{color:var(--muted);font-size:14px;margin:0 0 24px}
+  #loginGate .login-error{min-height:24px;color:var(--danger);font-size:13px;margin:0 0 12px}
+  #loginGate .btn{width:100%}
+  #admin .top{gap:14px}
+  #admin .logout{background:transparent;color:var(--yellow);border:1px solid var(--yellow);border-radius:8px;padding:8px 12px;font:500 12px 'Poppins';cursor:pointer;white-space:nowrap}
+  #admin .logout:hover{background:var(--yellow);color:#000}
 </style>
 </head>
 <body>
@@ -796,6 +808,22 @@
 <dialog id="d-cook"><h3>Política de cookies</h3><p>Texto de ejemplo. Esta web no usa cookies de seguimiento. Las publicaciones de Instagram solo se cargan si pulsas «Ver publicaciones»; en ese momento Instagram (Meta) puede instalar sus propias cookies. Un profesional debe revisar este texto antes de publicar.</p><p><button class="btn" onclick="this.closest('dialog').close()">Cerrar</button></p></dialog>
 </div>
 
+<!-- ============ ACCESO OBLIGATORIO A GESTIÓN ============ -->
+<div id="loginGate" aria-labelledby="loginTitle">
+  <form class="login-card" id="loginForm">
+    <div class="login-brand">Fuerza <span>Viva</span></div>
+    <h2 id="loginTitle" style="font:600 22px 'Oswald';text-transform:uppercase;margin:0 0 8px">Acceso a Gestión</h2>
+    <p>Introduce tus credenciales para acceder al panel privado.</p>
+    <label for="loginUser">Usuario</label>
+    <input id="loginUser" name="username" autocomplete="username" required>
+    <label for="loginPass">Contraseña</label>
+    <input id="loginPass" name="password" type="password" autocomplete="current-password" required>
+    <div id="loginError" class="login-error" role="alert" aria-live="polite"></div>
+    <button class="btn" type="submit">Iniciar sesión</button>
+    <p style="margin:18px 0 0;text-align:center"><a href="#inicio" style="font-size:13px">← Volver a la web</a></p>
+  </form>
+</div>
+
 <!-- ===================================================== PANEL DE GESTIÓN ===================================================== -->
 <div id="admin">
 <aside>
@@ -813,7 +841,7 @@
 </aside>
 
 <div class="main">
-  <div class="top"><h1 id="ptitle">Clientes</h1><span class="who">Panel de gestión · Fuerza Viva</span></div>
+  <div class="top"><h1 id="ptitle">Clientes</h1><span class="who">Panel de gestión · Fuerza Viva</span><button type="button" class="logout" id="logoutBtn">Cerrar sesión</button></div>
   <div class="content">
 
   <div class="page on" id="p-clientes">
@@ -969,11 +997,20 @@ const TITLES={clientes:"Clientes",citas:"Citas",correo:"Correo Electrónico",con
 function route(){
   const parts=(location.hash||"#inicio").slice(1).split("/"), name=parts[0];
   if(name==="gestion"){
-    $("#site").style.display="none"; $("#admin").style.display="flex";
+    $("#site").style.display="none";
+    if(sessionStorage.getItem("fuerzaVivaGestionAuth")!=="1"){
+      $("#admin").style.display="none";
+      $("#loginGate").style.display="flex";
+      document.title="Acceso a Gestión · Fuerza Viva";
+      window.scrollTo({top:0}); return;
+    }
+    $("#loginGate").style.display="none";
+    $("#admin").style.display="flex";
     document.title="Gestión · Fuerza Viva";
     openAdmin(ADMIN.includes(parts[1])?parts[1]:"clientes");
     window.scrollTo({top:0}); return;
   }
+  $("#loginGate").style.display="none";
   $("#admin").style.display="none"; $("#site").style.display="block";
   document.title="Fuerza Viva · Entrenamiento personal, rehabilitación y recomposición corporal";
   const v=VIEWS.includes(name)?name:"inicio";
@@ -988,6 +1025,27 @@ function route(){
   }
 }
 window.addEventListener("hashchange",route);
+
+/* Acceso de demostración: para producción, validar credenciales en el servidor. */
+$("#loginForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const username=$("#loginUser").value.trim();
+  const password=$("#loginPass").value;
+  if(username==="mtorres" && password==="rick26"){
+    sessionStorage.setItem("fuerzaVivaGestionAuth","1");
+    $("#loginError").textContent="";
+    $("#loginPass").value="";
+    route();
+  }else{
+    $("#loginError").textContent="Usuario o contraseña incorrectos.";
+    $("#loginPass").value="";
+    $("#loginPass").focus();
+  }
+});
+$("#logoutBtn").addEventListener("click",()=>{
+  sessionStorage.removeItem("fuerzaVivaGestionAuth");
+  location.hash="#gestion";
+});
 
 $("#burger").onclick=()=>$("#nav").classList.toggle("open");
 $$("[data-dlg]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();document.getElementById(a.dataset.dlg).showModal()}));
