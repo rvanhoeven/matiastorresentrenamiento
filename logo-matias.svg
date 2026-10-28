@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 175">
+<rect width="360" height="175" fill="#050505"/>
+<path d="M180 8 280 43v47c0 37-39 62-100 77C119 152 80 127 80 90V43Z" fill="none" stroke="#f4e900" stroke-width="7"/>
+<path d="M115 47h35v31h-35zM160 47h28v31h-28zM196 47h47v31h-47z" fill="none" stroke="#f4e900" stroke-width="4"/>
+<text x="180" y="94" fill="#f4e900" font-family="Arial,sans-serif" font-weight="900" font-size="25" text-anchor="middle">MATIAS TORRES</text>
+<path d="M91 101h178" stroke="#f4e900" stroke-width="5"/>
+<text x="180" y="120" fill="#f4e900" font-family="Arial,sans-serif" font-weight="800" font-size="14" text-anchor="middle">ENTRENADOR PERSONAL</text>
+</svg>
