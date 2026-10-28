@@ -418,6 +418,55 @@
     #admin .menu{display:flex;overflow-x:auto;padding:8px}#admin .menu button{width:auto;white-space:nowrap}
     #admin .side-foot{display:none}#admin .content{padding:18px 14px 60px}
   }
+  /* iconos por fila, filas clicables, solicitudes */
+  #admin tr.click{cursor:pointer}
+  #admin tr.click:hover td{background:#fffbe6}
+  #admin tr.click:hover td:first-child{box-shadow:inset 4px 0 0 var(--yellow)}
+  #admin tr.click:focus-visible{outline:2px solid var(--yellow-d);outline-offset:-2px}
+  #admin td.act{white-space:nowrap;text-align:right;width:1%}
+  #admin .ibtn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--line);background:#fff;display:inline-grid;place-items:center;cursor:pointer;color:#555;transition:.15s;padding:0;vertical-align:middle}
+  #admin .ibtn svg{width:16px;height:16px}
+  #admin .ibtn.edit:hover{background:var(--yellow);border-color:var(--yellow);color:#000}
+  #admin .ibtn.del:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+  #admin .ibtn+.ibtn{margin-left:6px}
+  #admin .bdg{margin-left:auto;background:var(--danger);color:#fff;border-radius:99px;font:600 11px 'Poppins';min-width:20px;height:20px;display:inline-grid;place-items:center;padding:0 6px}
+  #admin .bdg[hidden]{display:none}
+  #admin .menu button.on .bdg{background:#000;color:var(--yellow)}
+  #admin .solchips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  #admin .solchips button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font:500 13px 'Poppins';cursor:pointer}
+  #admin .solchips button.on{background:var(--black);border-color:var(--black);color:var(--yellow);font-weight:600}
+  #admin .sol{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:16px 18px;border:1px solid var(--line);border-left:5px solid var(--yellow);border-radius:12px;background:#fff;margin-bottom:12px;transition:.15s}
+  #admin .sol:hover{background:#fffbe6}
+  #admin .sol.st-Confirmada{border-left-color:var(--ok)}
+  #admin .sol.st-Rechazada,#admin .sol.st-Cancelada{border-left-color:#bdbdb5;background:#f7f7f4}
+  #admin .sol.st-Rechazada .sol-name,#admin .sol.st-Cancelada .sol-name{color:#6b6b66}
+  #admin .sol-main{flex:1 1 320px;min-width:0}
+  #admin .sol-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  #admin .sol-name{font:600 16px 'Poppins'}
+  #admin .sol-meta{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:13px;color:var(--muted);margin-top:6px}
+  #admin .sol-meta span{display:inline-flex;align-items:center;gap:6px}
+  #admin .sol-meta svg{width:14px;height:14px;flex:none}
+  #admin .sol-meta .when{color:var(--ink);font-weight:600}
+  #admin .sol-msg{margin-top:8px;font-size:13.5px;background:#faf9f4;border-left:3px solid var(--yellow);padding:6px 10px;border-radius:0 8px 8px 0;color:#444}
+  #admin .sol-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  #admin .abtn{display:inline-flex;align-items:center;gap:7px;border:0;border-radius:9px;padding:9px 14px;font:600 12.5px 'Poppins';cursor:pointer;transition:.15s;white-space:nowrap}
+  #admin .abtn svg{width:16px;height:16px;flex:none}
+  #admin .abtn.ok{background:var(--ok);color:#fff}#admin .abtn.ok:hover{background:#17803f}
+  #admin .abtn.no{background:#fff;color:#8a5a00;border:1.5px solid #e6c36a}#admin .abtn.no:hover{background:#fff2c2}
+  #admin .abtn.del{background:#fff;color:var(--danger);border:1.5px solid #f0b5b5}#admin .abtn.del:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+  #admin .abtn.resend{background:#fff;color:#333;border:1.5px solid var(--line)}#admin .abtn.resend:hover{background:var(--yellow);border-color:var(--yellow)}
+  #admin .sent{font-size:12px;color:#157a42;display:inline-flex;align-items:center;gap:5px}
+  #admin .sent svg{width:14px;height:14px;flex:none}
+  #admin .p-done{background:#e9e9e4;color:#555}
+  #d-confirm{width:min(92vw,480px)}
+  #d-confirm .dc-head{display:flex;gap:14px;align-items:flex-start}
+  #d-confirm .dc-ic{font-size:30px;line-height:1}
+  #d-confirm h3{font-size:22px;margin-bottom:8px}
+  #d-confirm .dc-body{font-size:14.5px;color:#444;line-height:1.55}
+  #d-confirm .dc-body b{color:#111}
+  #d-confirm .dc-row{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap}
+  #d-confirm .btn.danger{background:var(--danger);color:#fff}
+  #d-confirm .btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
   .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;border-left:5px solid var(--ok);opacity:0;pointer-events:none;transition:.25s;z-index:99}
   .toast.show{opacity:1}.toast.err{border-left-color:var(--danger)}
 
@@ -925,6 +974,7 @@
   <div class="menu">
     <button data-page="clientes" class="on"><span class="ic">👥</span>Clientes</button>
     <button data-page="citas"><span class="ic">📅</span>Citas</button>
+    <button data-page="solicitudes"><span class="ic">📨</span>Solicitudes<b class="bdg" id="solBadge" hidden></b></button>
     <button data-page="correo"><span class="ic">✉️</span>Correo Electrónico</button>
     <button data-page="contabilidad"><span class="ic">💶</span>Contabilidad</button>
   </div>
@@ -943,9 +993,9 @@
       <button data-st="c-del">🗑️ Eliminar cliente</button>
     </div>
     <div class="card sub-panel on" id="c-lista">
-      <h2>Lista de clientes</h2><p class="sub">Todo lo que hay ahora mismo en la base de datos.</p>
+      <h2>Lista de clientes</h2><p class="sub">Todo lo que hay ahora mismo en la base de datos. Haz clic en un cliente para editarlo.</p>
       <div class="tools"><input id="q" placeholder="Buscar por nombre, teléfono, email o nota…"><button class="btn ghost" id="reload">↻ Actualizar</button><span class="count" id="ccount"></span></div>
-      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Móvil</th><th>Email</th><th>Perfil / Notas</th></tr></thead><tbody id="ctbody"></tbody></table></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Móvil</th><th>Email</th><th>Perfil / Notas</th><th></th></tr></thead><tbody id="ctbody"></tbody></table></div>
     </div>
     <div class="card sub-panel" id="c-add">
       <h2>Añadir cliente</h2><p class="sub">Nombre y apellidos son obligatorios.</p>
@@ -997,6 +1047,19 @@
     </div>
   </div>
 
+  <div class="page" id="p-solicitudes">
+    <div class="card">
+      <h2>Solicitudes de cita</h2><p class="sub">Peticiones recibidas desde la web. Confirma para crear la cita y avisar a la persona por email.</p>
+      <div class="solchips" id="solChips">
+        <button data-f="todas" class="on">Todas</button>
+        <button data-f="Pendiente">⏳ Pendientes <span id="nPend"></span></button>
+        <button data-f="resueltas">✔ Resueltas</button>
+        <button id="solReload" type="button">↻ Actualizar</button>
+      </div>
+      <div id="sollist"></div>
+    </div>
+  </div>
+
   <div class="page" id="p-correo">
     <div class="card">
       <h2>Correo electrónico</h2><p class="sub">Bandeja de ejemplo. Más adelante se puede conectar a un correo real con un flujo de n8n.</p>
@@ -1044,6 +1107,7 @@
 </div>
 </div>
 
+<dialog id="d-confirm" aria-labelledby="dcTitle"><div class="dc-head"><span class="dc-ic" id="dcIcon">⚠️</span><div><h3 id="dcTitle"></h3><div class="dc-body" id="dcBody"></div></div></div><div class="dc-row"><button type="button" class="btn ghost" id="dcCancel">Cancelar</button><button type="button" class="btn" id="dcOk">Aceptar</button></div></dialog>
 <div class="toast" id="toast"></div>
 
 <script id="fotos">
@@ -1100,10 +1164,39 @@ async function rpc(fn,body){
   return r.json();
 }
 
+async function arpc(fn,body){
+  const t=await accessToken();
+  const r=await fetch(BASE+"/rest/v1/rpc/"+fn,{method:"POST",headers:{...H,Authorization:"Bearer "+t},body:JSON.stringify(body)});
+  if(r.status===401){saveSession(null);location.hash="#gestion";route()}
+  if(!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+/* ventana de confirmación propia (en lugar del confirm() del navegador) */
+function askConfirm({title,html,ok="Aceptar",cancel="Cancelar",danger=false,icon="⚠️"}){
+  return new Promise(res=>{
+    const d=$("#d-confirm"),okb=$("#dcOk"),cb=$("#dcCancel");
+    $("#dcTitle").textContent=title; $("#dcBody").innerHTML=html; $("#dcIcon").textContent=icon;
+    okb.textContent=ok; okb.className="btn"+(danger?" danger":""); cb.textContent=cancel||""; cb.hidden=!cancel;
+    const done=v=>{okb.onclick=cb.onclick=d.oncancel=null; d.close(); res(v)};
+    okb.onclick=()=>done(true); cb.onclick=()=>done(false); d.oncancel=e=>{e.preventDefault(); done(false)};
+    d.showModal(); (cancel&&danger?cb:okb).focus();
+  });
+}
+const IC={
+  ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  no:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>',
+  tag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8Z"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/></svg>'
+};
+
 /* ============ router ============ */
 const VIEWS=["inicio","sobre","equipo","metodologia","servicios","programas","tarifas","faq","reservar","contacto"];
-const ADMIN=["clientes","citas","correo","contabilidad"];
-const TITLES={clientes:"Clientes",citas:"Citas",correo:"Correo Electrónico",contabilidad:"Contabilidad"};
+const ADMIN=["clientes","citas","solicitudes","correo","contabilidad"];
+const TITLES={clientes:"Clientes",citas:"Citas",solicitudes:"Solicitudes de cita",correo:"Correo Electrónico",contabilidad:"Contabilidad"};
 
 function route(){
   const parts=(location.hash||"#inicio").slice(1).split("/"), name=parts[0];
@@ -1271,7 +1364,8 @@ function openAdmin(p){
   $$("#admin .menu button").forEach(x=>x.classList.toggle("on",x.dataset.page===p));
   $$("#admin .page").forEach(x=>x.classList.toggle("on",x.id==="p-"+p));
   $("#ptitle").textContent=TITLES[p];
-  if(p==="clientes")loadClients(); if(p==="citas")loadCitas(); if(p==="contabilidad")loadMov(); if(p==="correo")renderMail();
+  if(p==="clientes")loadClients(); if(p==="citas")loadCitas(); if(p==="solicitudes")loadSolicitudes(); if(p==="contabilidad")loadMov(); if(p==="correo")renderMail();
+  if(p!=="solicitudes")refreshSolBadge();
 }
 $$("#admin .menu button").forEach(b=>b.addEventListener("click",()=>{location.hash="#gestion/"+b.dataset.page}));
 $$("#ctabs button").forEach(b=>b.addEventListener("click",()=>{
@@ -1289,7 +1383,7 @@ async function loadClients(){
 function renderClients(){
   const q=$("#q").value.trim().toLowerCase();
   const rows=clients.filter(c=>!q||[c.first_name,c.surname,c.mobile_number,c.email,c.profile_notes].join(" ").toLowerCase().includes(q));
-  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="notes">${esc(c.profile_notes)}</td></tr>`).join(""):`<tr><td colspan="4" class="empty">No hay clientes que mostrar.</td></tr>`;
+  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click" data-id="${c.id}" tabindex="0" title="Haz clic para editar"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="5" class="empty">No hay clientes que mostrar.</td></tr>`;
   $("#ccount").textContent=rows.length+" de "+clients.length+" clientes";
   const opts=clients.map(c=>`<option value="${c.id}">${esc(c.first_name)} ${esc(c.surname)}</option>`).join("");
   const ke=$("#selEdit").value,kd=$("#selDel").value,kc=$("#selCita").value;
@@ -1303,7 +1397,26 @@ function fillEdit(){const c=clients.find(x=>x.id===$("#selEdit").value),f=$("#fE
 function fillDel(){const c=clients.find(x=>x.id===$("#selDel").value);$("#delPrev").innerHTML=c?`<b>${esc(c.first_name)} ${esc(c.surname)}</b><br>${esc(c.mobile_number)} · ${esc(c.email)}<br><span style="color:#555">${esc(c.profile_notes)}</span>`:"No hay clientes."}
 $("#fAdd").addEventListener("submit",async e=>{e.preventDefault();try{await api("/clients",{method:"POST",...MIN,body:JSON.stringify(clean(e.target))});e.target.reset();toast("Cliente añadido ✓");loadClients()}catch(er){toast("Error: "+er.message,true)}});
 $("#fEdit").addEventListener("submit",async e=>{e.preventDefault();const id=$("#selEdit").value;if(!id)return;try{await api("/clients?id=eq."+id,{method:"PATCH",...MIN,body:JSON.stringify(clean(e.target))});toast("Cambios guardados ✓");loadClients()}catch(er){toast("Error: "+er.message,true)}});
-$("#btnDel").addEventListener("click",async()=>{const id=$("#selDel").value,c=clients.find(x=>x.id===id);if(!c)return;if(!confirm("¿Eliminar a "+c.first_name+" "+c.surname+"? No se puede deshacer."))return;try{await api("/clients?id=eq."+id,{method:"DELETE",...MIN});toast("Cliente eliminado");loadClients()}catch(er){toast("Error: "+er.message,true)}});
+async function askDelClient(id){
+  const c=clients.find(x=>x.id===id); if(!c) return;
+  const ok=await askConfirm({title:"¿Eliminar cliente?",icon:"🗑️",danger:true,ok:"Sí, eliminar",
+    html:`Vas a eliminar a <b>${esc(c.first_name)} ${esc(c.surname)}</b>.<br>Se borrarán también <b>todas sus citas</b>. <b>No se puede deshacer.</b>`});
+  if(!ok) return;
+  try{await api("/clients?id=eq."+id,{method:"DELETE",...MIN});toast("Cliente eliminado");loadClients()}catch(er){toast("Error: "+er.message,true)}
+}
+function editClient(id){
+  $$("#ctabs button").forEach(x=>x.classList.toggle("on",x.dataset.st==="c-edit"));
+  $$("#p-clientes .sub-panel").forEach(x=>x.classList.toggle("on",x.id==="c-edit"));
+  $("#selEdit").value=id; fillEdit();
+  window.scrollTo({top:0,behavior:"smooth"}); $("#fEdit").first_name.focus();
+}
+$("#btnDel").addEventListener("click",()=>askDelClient($("#selDel").value));
+$("#ctbody").addEventListener("click",e=>{
+  const tr=e.target.closest("tr.click"); if(!tr) return;
+  const b=e.target.closest("button[data-act]");
+  if(b&&b.dataset.act==="del") askDelClient(tr.dataset.id); else editClient(tr.dataset.id);
+});
+$("#ctbody").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.matches("tr.click")) editClient(e.target.dataset.id) });
 $("#selEdit").addEventListener("change",fillEdit);$("#selDel").addEventListener("change",fillDel);
 $("#q").addEventListener("input",renderClients);$("#reload").addEventListener("click",loadClients);
 
@@ -1323,6 +1436,151 @@ async function loadCitas(){
 window.cancelCita=async id=>{try{await api("/citas?id=eq."+id,{method:"PATCH",...MIN,body:JSON.stringify({estado:"Cancelada"})});toast("Cita cancelada");loadCitas()}catch(e){toast("Error: "+e.message,true)}};
 window.delCita=async id=>{if(!confirm("¿Borrar esta cita?"))return;try{await api("/citas?id=eq."+id,{method:"DELETE",...MIN});toast("Cita borrada");loadCitas()}catch(e){toast("Error: "+e.message,true)}};
 $("#fCita").addEventListener("submit",async e=>{e.preventDefault();const d=clean(e.target);d.fecha_hora=new Date(d.fecha_hora).toISOString();try{await api("/citas",{method:"POST",...MIN,body:JSON.stringify(d)});e.target.reset();toast("Cita guardada ✓");loadCitas()}catch(er){toast("Error: "+er.message,true)}});
+
+/* solicitudes de cita */
+const TZM="Europe/Madrid";
+const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
+const fFecha=iso=>cap(new Date(iso).toLocaleDateString("es-ES",{timeZone:TZM,weekday:"long",day:"numeric",month:"long",year:"numeric"}));
+const fHora=iso=>new Date(iso).toLocaleTimeString("es-ES",{timeZone:TZM,hour:"2-digit",minute:"2-digit"});
+const fCorta=iso=>new Date(iso).toLocaleString("es-ES",{timeZone:TZM,day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+let sols=[], solFilter="todas";
+async function refreshSolBadge(){
+  try{
+    const r=await api("/solicitudes_cita?select=id&estado=eq.Pendiente");
+    const b=$("#solBadge"); b.textContent=r.length; b.hidden=!r.length;
+    return r.length;
+  }catch(_){}
+}
+async function loadSolicitudes(){
+  try{ sols=await api("/solicitudes_cita?select=*&order=created_at.desc"); renderSols(); refreshSolBadge() }
+  catch(e){toast("Error al cargar solicitudes: "+e.message,true)}
+}
+function renderSols(){
+  const pend=sols.filter(s=>s.estado==="Pendiente").length;
+  $("#nPend").textContent=pend?"("+pend+")":"";
+  $$("#solChips button[data-f]").forEach(b=>b.classList.toggle("on",b.dataset.f===solFilter));
+  let rows=sols.filter(s=>solFilter==="todas"||(solFilter==="resueltas"?s.estado!=="Pendiente":s.estado===solFilter));
+  rows.sort((a,b)=>{
+    const pa=a.estado==="Pendiente",pb=b.estado==="Pendiente";
+    if(pa!==pb) return pa?-1:1;
+    return pa?new Date(a.inicio)-new Date(b.inicio):new Date(b.resuelta_at||b.created_at)-new Date(a.resuelta_at||a.created_at);
+  });
+  $("#sollist").innerHTML=rows.length?rows.map(s=>{
+    const pen=s.estado==="Pendiente", conf=s.estado==="Confirmada";
+    const pill=pen?'<span class="pill p-pen">⏳ Pendiente</span>':conf?'<span class="pill p-ok">✔ Confirmada</span>':'<span class="pill p-done">✖ '+esc(s.estado)+' · resuelta</span>';
+    const sent=conf?(s.confirmacion_enviada_at?`<span class="sent">${IC.mail} Email enviado</span>`:'<span class="sent" style="color:#8a6a00">'+IC.mail+' Email sin enviar</span>'):"";
+    const acts=pen
+      ?`<button class="abtn ok" data-a="ok" title="Confirmar cita y enviar email">${IC.ok}Confirmar</button><button class="abtn no" data-a="no" title="Rechazar (queda como resuelta)">${IC.no}Rechazar</button><button class="abtn del" data-a="del" title="Eliminar solicitud">${IC.trash}Eliminar</button>`
+      :`${conf?`<button class="abtn resend" data-a="mail" title="Enviar de nuevo el email de confirmación">${IC.mail}${s.confirmacion_enviada_at?"Reenviar email":"Enviar email"}</button>`:""}<button class="abtn del" data-a="del" title="Eliminar solicitud">${IC.trash}Eliminar</button>`;
+    return `<div class="sol st-${esc(s.estado)}" data-id="${s.id}">
+      <div class="sol-main">
+        <div class="sol-top"><span class="sol-name">${esc(s.nombre)}</span>${pill}${sent}</div>
+        <div class="sol-meta">
+          <span class="when">${IC.cal}${esc(fFecha(s.inicio))} · ${esc(fHora(s.inicio))}</span>
+          <span>${IC.tag}${esc(s.motivo)}</span>
+          <span>${IC.mail}<a href="mailto:${esc(s.email)}">${esc(s.email)}</a></span>
+          ${s.telefono?`<span>${IC.phone}<a href="tel:${esc(s.telefono)}">${esc(s.telefono)}</a></span>`:""}
+          <span title="Recibida">🕓 Recibida ${esc(fCorta(s.created_at))}</span>
+        </div>
+        ${s.mensaje?`<div class="sol-msg">“${esc(s.mensaje)}”</div>`:""}
+      </div>
+      <div class="sol-act">${acts}</div>
+    </div>`}).join(""):`<div class="empty">${sols.length?"No hay solicitudes en este filtro.":"Todavía no hay solicitudes de cita."}</div>`;
+}
+$("#solChips").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.id==="solReload") return loadSolicitudes();
+  solFilter=b.dataset.f; renderSols();
+});
+$("#sollist").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-a]"); if(!b) return;
+  const id=b.closest(".sol").dataset.id, a=b.dataset.a;
+  if(a==="ok") solConfirmar(id); else if(a==="no") solRechazar(id); else if(a==="del") solEliminar(id); else if(a==="mail") solEmail(id,true);
+});
+
+/* mensaje estándar de confirmación (informal, alegre y profesional) */
+function buildEmail(s){
+  const n=s.nombre.trim().split(/\s+/)[0], fecha=fFecha(s.inicio), hora=fHora(s.inicio);
+  const dir="C. José Ávila, N3, Bajo A1 · 03300 Orihuela (Alicante)", wa="686 728 907";
+  const subject=`¡Tu cita está confirmada, ${n}! 💪`;
+  const text=`Hola, ${n}:
+
+¡Qué alegría! Tu cita orientativa ya está confirmada 🎉
+
+📅 ${fecha}
+🕒 ${hora} (hora de España)
+📍 ${dir}
+
+Será un primer encuentro sin compromiso para conocernos: hablaremos de tus objetivos, de cómo te sientes y de cómo podemos ayudarte a moverte mejor, con calma y a tu medida. No hace falta traer nada especial: ropa cómoda y muchas ganas.
+
+Si te surge cualquier imprevisto o necesitas cambiar la hora, escríbenos por WhatsApp al ${wa} y lo vemos sin problema.
+
+¡Tengo muchas ganas de conocerte!
+
+Un abrazo,
+Matías Torres
+Entrenador personal · Orihuela`;
+  const html=`<div style="background:#f4f3ee;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a">
+<div style="max-width:560px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e3e1d8">
+<div style="background:#0d0d0d;padding:22px 26px;border-bottom:4px solid #FFD51F"><div style="color:#FFD51F;font-size:20px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Matias Torres</div><div style="color:#bdbdb5;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px">Entrenador personal</div></div>
+<div style="padding:28px 26px;font-size:15.5px;line-height:1.6">
+<p style="margin:0 0 14px">Hola, <b>${esc(n)}</b>:</p>
+<p style="margin:0 0 18px">¡Qué alegría! Tu cita orientativa ya está confirmada 🎉</p>
+<div style="background:#fffbe6;border-left:5px solid #FFD51F;border-radius:8px;padding:14px 18px;margin:0 0 20px;line-height:1.9">📅 <b>${esc(fecha)}</b><br>🕒 <b>${esc(hora)}</b> (hora de España)<br>📍 ${esc(dir)}</div>
+<p style="margin:0 0 14px">Será un primer encuentro sin compromiso para conocernos: hablaremos de tus objetivos, de cómo te sientes y de cómo podemos ayudarte a moverte mejor, con calma y a tu medida. No hace falta traer nada especial: ropa cómoda y muchas ganas.</p>
+<p style="margin:0 0 20px">Si te surge cualquier imprevisto o necesitas cambiar la hora, escríbenos y lo vemos sin problema.</p>
+<p style="margin:0 0 24px"><a href="https://wa.me/34686728907" style="display:inline-block;background:#FFD51F;color:#000;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:9px">💬 Escríbenos por WhatsApp · ${wa}</a></p>
+<p style="margin:0 0 4px">¡Tengo muchas ganas de conocerte!</p>
+<p style="margin:18px 0 0">Un abrazo,<br><b>Matías Torres</b><br><span style="color:#6b6b66">Entrenador personal · Orihuela</span></p>
+</div></div></div>`;
+  return {subject,text,html};
+}
+async function solEmail(id,manual){
+  const s=sols.find(x=>x.id===id); if(!s) return;
+  const m=buildEmail(s); let res=null;
+  try{
+    const t=await accessToken();
+    const r=await fetch(BASE+"/functions/v1/enviar-confirmacion",{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+t,"Content-Type":"application/json"},body:JSON.stringify({id,subject:m.subject,text:m.text,html:m.html})});
+    res=await r.json().catch(()=>null);
+  }catch(_){}
+  if(res&&res.sent){ toast("Email de confirmación enviado a "+s.email+" ✓"); loadSolicitudes(); return true }
+  // sin envío automático disponible: preparamos el mensaje en el correo de Matías
+  const go=await askConfirm({title:manual?"Enviar email de confirmación":"Cita confirmada ✓",icon:"✉️",ok:"Abrir en mi correo",cancel:"Ahora no",
+    html:(manual?"":"La cita está confirmada y ya está en la agenda.<br><br>")+"El envío automático todavía no está activado, así que he preparado el mensaje de confirmación para <b>"+esc(s.email)+"</b>. Solo tienes que pulsar enviar en tu correo."});
+  if(go) location.href="mailto:"+encodeURIComponent(s.email).replace(/%40/g,"@")+"?subject="+encodeURIComponent(m.subject)+"&body="+encodeURIComponent(m.text);
+  return false;
+}
+async function solConfirmar(id){
+  const s=sols.find(x=>x.id===id); if(!s) return;
+  const ok=await askConfirm({title:"¿Confirmar esta cita?",icon:"✅",ok:"Sí, confirmar",
+    html:`<b>${esc(s.nombre)}</b><br>${esc(fFecha(s.inicio))} · ${esc(fHora(s.inicio))}<br><br>Se añadirá a la agenda y se enviará un email de confirmación a <b>${esc(s.email)}</b>.`});
+  if(!ok) return;
+  try{
+    const r=await arpc("admin_resolver_solicitud",{p_id:id,p_accion:"confirmar"});
+    if(!r||!r.ok) throw new Error(r&&r.error==="already_resolved"?"Esta solicitud ya estaba resuelta.":"No se pudo confirmar.");
+    await loadSolicitudes(); loadClients().catch(()=>{});
+    await solEmail(id,false);
+  }catch(e){toast("Error: "+e.message,true); loadSolicitudes()}
+}
+async function solRechazar(id){
+  const s=sols.find(x=>x.id===id); if(!s) return;
+  const ok=await askConfirm({title:"¿Rechazar esta solicitud?",icon:"🚫",ok:"Sí, rechazar",
+    html:`<b>${esc(s.nombre)}</b> · ${esc(fFecha(s.inicio))}, ${esc(fHora(s.inicio))}<br><br>Se marcará como <b>resuelta</b> y seguirá en la lista. No se envía ningún email.`});
+  if(!ok) return;
+  try{
+    const r=await arpc("admin_resolver_solicitud",{p_id:id,p_accion:"rechazar"});
+    if(!r||!r.ok) throw new Error(r&&r.error==="already_resolved"?"Esta solicitud ya estaba resuelta.":"No se pudo rechazar.");
+    toast("Solicitud rechazada · marcada como resuelta"); loadSolicitudes();
+  }catch(e){toast("Error: "+e.message,true); loadSolicitudes()}
+}
+async function solEliminar(id){
+  const s=sols.find(x=>x.id===id); if(!s) return;
+  const ok=await askConfirm({title:"¿Eliminar solicitud?",icon:"🗑️",danger:true,ok:"Sí, eliminar",
+    html:`Vas a eliminar la solicitud de <b>${esc(s.nombre)}</b>.<br>`+(s.estado==="Confirmada"?"La cita ya creada seguirá en la agenda.<br>":"")+`<b>No se puede deshacer.</b>`});
+  if(!ok) return;
+  try{await api("/solicitudes_cita?id=eq."+id,{method:"DELETE",...MIN}); toast("Solicitud eliminada"); loadSolicitudes()}
+  catch(e){toast("Error: "+e.message,true)}
+}
 
 /* correo (demo local) */
 const inbox=[
