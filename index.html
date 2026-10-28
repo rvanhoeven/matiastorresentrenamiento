@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <link rel="shortcut icon" href="./favicon.svg">
-<title>Fuerza Viva · Entrenamiento personal, rehabilitación y recomposición corporal</title>
+<title>Matias Torres Entrenador Personal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -23,7 +23,7 @@
   header .wrap{max-width:1320px}
   .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
   .brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none;flex-shrink:0}
-  .brand svg{height:46px;width:46px}
+  .brand img{display:block;max-width:150px;height:auto;max-height:68px;object-fit:contain}.brand b{font-size:16px}
   .brand b{font-family:'Oswald';font-size:20px;letter-spacing:.08em;text-transform:uppercase;color:var(--yellow);display:block;line-height:1}
   .brand small{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#bdbdb5}
   nav{display:flex;align-items:center;gap:2px}
@@ -383,7 +383,7 @@
   <div class="wrap nav">
     <a class="brand" href="#inicio">
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 59 15v22c0 13-11 21-27 25C16 58 5 50 5 37V15z" fill="none" stroke="#FFD51F" stroke-width="4"/><path d="M36 14 20 35h10l-3 15 17-23H34z" fill="#FFD51F"/></svg>
-      <span><b>Fuerza Viva</b><small>Entrenamiento personal</small></span>
+      <span><b>Matias Torres Entrenador Personal</b><small>Entrenamiento personal</small></span>
     </a>
     <button class="burger" id="burger" aria-label="Menú">☰</button>
     <nav id="nav">
@@ -778,12 +778,12 @@
   <div class="phead"><div class="wrap"><h1>Escríbenos y <span>contacta</span></h1><p>Cuéntanos qué necesitas y te respondemos en menos de 24 horas laborables. Si prefieres elegir tú el día y la hora, <a href="#reservar" style="color:var(--yellow)">reserva una cita orientativa</a>.</p></div></div>
   <section><div class="wrap"><div class="cgrid">
     <div class="info">
-      <p><b>Dirección</b>Calle Ejemplo 12, Bajo, 00000 Ciudad Ejemplo<br><span class="small">Acceso sin escalones · aparcamiento cercano</span></p>
+      <p><b>Dirección</b>C. José Ávila, N3, Bajo A1, 03300 Orihuela, Alicante<br><span class="small">Orihuela, Alicante</span><br><a href="https://www.openstreetmap.org/search?query=C.%20Jos%C3%A9%20%C3%81vila%2C%20N3%2C%20Bajo%20A1%2C%2003300%20Orihuela%2C%20Alicante" target="_blank" rel="noopener">Abrir indicaciones en OpenStreetMap ↗</a></p>
       <p><b>Horario</b>Lunes a viernes: 7:00 a 21:00<br>Sábados: 9:00 a 13:00</p>
       <p><b>WhatsApp</b>+34 600 000 000 (ficticio)</p>
       <p><b>Email</b>hola@fuerzaviva.example</p>
       <p><b>Instagram</b><a href="https://www.instagram.com/matiastorresep/" target="_blank" rel="noopener">@matiastorresep</a></p>
-      <div class="map">📍 Aquí iría el mapa</div>
+      <div class="map-frame" style="margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#eee"><iframe title="Mapa de OpenStreetMap: Matias Torres Entrenador Personal, Orihuela" width="100%" height="320" style="border:0;display:block" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=-0.9535%2C38.0780%2C-0.9350%2C38.0910&amp;layer=mapnik&amp;marker=38.0845%2C-0.9442"></iframe><div style="padding:10px 12px;background:#fff;font-size:13px"><a href="https://www.openstreetmap.org/search?query=C.%20Jos%C3%A9%20%C3%81vila%2C%20N3%2C%20Bajo%20A1%2C%2003300%20Orihuela%2C%20Alicante" target="_blank" rel="noopener">Ver ubicación y ruta en OpenStreetMap ↗</a></div></div>
     </div>
     <form class="cform" id="fContact">
       <div class="two"><div><label>Nombre *</label><input name="first_name" required></div><div><label>Apellidos *</label><input name="surname" required></div></div>
@@ -798,7 +798,7 @@
 </div>
 
 <footer><div class="wrap">
-  <span>© 2026 Fuerza Viva · Borrador con textos de ejemplo</span>
+  <span>© 2026 Matias Torres Entrenador Personal · Borrador con textos de ejemplo</span>
   <span><a href="https://www.instagram.com/matiastorresep/" target="_blank" rel="noopener">Instagram</a><a data-dlg="d-legal">Aviso legal</a><a data-dlg="d-priv">Privacidad</a><a data-dlg="d-cook">Cookies</a></span>
 </div></footer>
 
@@ -827,10 +827,7 @@
 <!-- ===================================================== PANEL DE GESTIÓN ===================================================== -->
 <div id="admin">
 <aside>
-  <div class="logo">
-    <svg viewBox="0 0 64 64"><path d="M32 3 59 15v22c0 13-11 21-27 25C16 58 5 50 5 37V15z" fill="none" stroke="#FFD51F" stroke-width="4"/><path d="M36 14 20 35h10l-3 15 17-23H34z" fill="#FFD51F"/></svg>
-    <div><b>Fuerza Viva</b><small>Gestión</small></div>
-  </div>
+  <div class="logo"><img src="./logo-matias.webp" alt="Matias Torres Entrenador Personal" style="width:120px;max-height:60px;object-fit:contain"><div><b>Matias Torres</b><small>Gestión</small></div></div>
   <div class="menu">
     <button data-page="clientes" class="on"><span class="ic">👥</span>Clientes</button>
     <button data-page="citas"><span class="ic">📅</span>Citas</button>
@@ -841,7 +838,7 @@
 </aside>
 
 <div class="main">
-  <div class="top"><h1 id="ptitle">Clientes</h1><span class="who">Panel de gestión · Fuerza Viva</span><button type="button" class="logout" id="logoutBtn">Cerrar sesión</button></div>
+  <div class="top"><h1 id="ptitle">Clientes</h1><span class="who">Panel de gestión · Matias Torres Entrenador Personal</span><button type="button" class="logout" id="logoutBtn">Cerrar sesión</button></div>
   <div class="content">
 
   <div class="page on" id="p-clientes">
@@ -998,21 +995,21 @@ function route(){
   const parts=(location.hash||"#inicio").slice(1).split("/"), name=parts[0];
   if(name==="gestion"){
     $("#site").style.display="none";
-    if(sessionStorage.getItem("fuerzaVivaGestionAuth")!=="1"){
+    if(sessionStorage.getItem("matiasTorresGestionAuth")!=="1"){
       $("#admin").style.display="none";
       $("#loginGate").style.display="flex";
-      document.title="Acceso a Gestión · Fuerza Viva";
+      document.title="Acceso a Gestión · Matias Torres Entrenador Personal";
       window.scrollTo({top:0}); return;
     }
     $("#loginGate").style.display="none";
     $("#admin").style.display="flex";
-    document.title="Gestión · Fuerza Viva";
+    document.title="Gestión · Matias Torres Entrenador Personal";
     openAdmin(ADMIN.includes(parts[1])?parts[1]:"clientes");
     window.scrollTo({top:0}); return;
   }
   $("#loginGate").style.display="none";
   $("#admin").style.display="none"; $("#site").style.display="block";
-  document.title="Fuerza Viva · Entrenamiento personal, rehabilitación y recomposición corporal";
+  document.title="Matias Torres Entrenador Personal";
   const v=VIEWS.includes(name)?name:"inicio";
   $$(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
   $$("nav a[data-v]").forEach(a=>a.classList.toggle("on",a.dataset.v===v&&!a.classList.contains("cita")));
@@ -1032,7 +1029,7 @@ $("#loginForm").addEventListener("submit",e=>{
   const username=$("#loginUser").value.trim();
   const password=$("#loginPass").value;
   if(username==="mtorres" && password==="rick26"){
-    sessionStorage.setItem("fuerzaVivaGestionAuth","1");
+    sessionStorage.setItem("matiasTorresGestionAuth","1");
     $("#loginError").textContent="";
     $("#loginPass").value="";
     route();
@@ -1043,7 +1040,7 @@ $("#loginForm").addEventListener("submit",e=>{
   }
 });
 $("#logoutBtn").addEventListener("click",()=>{
-  sessionStorage.removeItem("fuerzaVivaGestionAuth");
+  sessionStorage.removeItem("matiasTorresGestionAuth");
   location.hash="#gestion";
 });
 
