@@ -230,7 +230,7 @@
     box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 80px rgba(214,41,118,.14)}
   .social .igbox{background:#fff;border-radius:20px 20px 0 0;overflow:hidden;height:var(--ih);min-height:300px;position:relative}
   .social .igbox iframe{display:block;width:100%;height:100%;border:0}
-  .social .igbox.ph{background:#121212}
+  .social .igbox.ig-wait{background:#121212}
   .igph{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center}
   .igph-grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:3px;padding:3px;opacity:.9}
   .igph-grid i{display:block;background:linear-gradient(145deg,#232323,#171717);border-radius:3px;position:relative}
@@ -293,8 +293,12 @@
   /* ---------- reservar cita ---------- */
   #v-reservar{background:var(--bg)}
   #v-reservar main{padding:36px 0 70px}
-  .rgrid{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:start}
-  @media(max-width:860px){.rgrid{grid-template-columns:1fr}}
+  .rgrid{display:grid;grid-template-columns:1fr;gap:26px;align-items:start}
+  #v-reservar .box.picker{padding:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:hidden}
+  .pcol{padding:24px 26px}
+  .pcol2{background:#fffdf2;border-left:1px solid var(--line);scroll-margin-top:90px}
+  @media(max-width:860px){#v-reservar .box.picker{grid-template-columns:1fr}.pcol{padding:20px 16px}.pcol2{border-left:0;border-top:1px solid var(--line)}}
+  #fRes{scroll-margin-top:90px}
   #v-reservar .box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:0 3px 0 var(--yellow)}
   #v-reservar .box h2{font-size:20px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
   .nn{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--yellow);font:700 14px 'Oswald'}
@@ -304,16 +308,35 @@
   .cal-top button:disabled{opacity:.3;cursor:default}
   .dow,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
   .dow span{text-align:center;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);padding:4px 0}
-  .d{aspect-ratio:1;border:1.5px solid transparent;border-radius:9px;background:transparent;font:500 14px 'Poppins';color:#b5b3a8;display:grid;place-items:center}
+  .d{aspect-ratio:1;border:1.5px solid transparent;border-radius:9px;background:transparent;font:500 14px 'Poppins';color:#b5b3a8;display:grid;place-items:center;align-content:center;line-height:1.15;padding:2px}
+  .d small{display:block;font:600 10px 'Poppins';color:#8a6a00;margin-top:1px}
+  .d.sel small{color:var(--yellow)}
   .d.free{background:#fffbe6;border-color:var(--yellow);color:var(--ink);cursor:pointer;font-weight:600}
   .d.free:hover{background:var(--yellow)}
   .d.sel{background:var(--black);border-color:var(--black);color:var(--yellow)}
+  .d.free.sel,.d.free.sel:hover{background:var(--black);border-color:var(--black);color:var(--yellow)}
   #v-reservar .legend{font-size:12.5px;color:var(--muted);margin-top:12px}
-  .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px}
-  .slot{padding:11px 6px;border:1.5px solid var(--line);border-radius:9px;background:#fff;font:600 14px 'Poppins';cursor:pointer}
+  .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+  .slot{padding:13px 6px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font:600 15px 'Poppins';cursor:pointer;transition:.12s}
   .slot:hover{border-color:var(--yellow-d);background:#fffbe6}
   .slot.sel{background:var(--black);color:var(--yellow);border-color:var(--black)}
   .hint{color:var(--muted);font-size:14px}
+  .day-title{font:600 17px 'Oswald';text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px}
+  .slot-g{margin-bottom:16px}
+  .slot-h{display:flex;justify-content:space-between;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#7a6200;margin-bottom:8px}
+  .slot-h span{font-weight:500;color:var(--muted);letter-spacing:0;text-transform:none}
+  .empty-pick{display:flex;gap:12px;align-items:center;border:1.5px dashed var(--yellow-d);border-radius:12px;padding:16px;background:#fff;margin-bottom:18px}
+  .empty-pick .arrow{font-size:26px}
+  .empty-pick p{margin:0;font-size:14px;color:#555}
+  @media(max-width:860px){.empty-pick .arrow{transform:rotate(90deg)}}
+  .quick-t{font-size:13px;font-weight:600;margin-bottom:8px}
+  .quick{display:flex;flex-wrap:wrap;gap:8px}
+  .quick button{border:1.5px solid var(--yellow);background:#fff;border-radius:99px;padding:9px 14px;font:600 13px 'Poppins';cursor:pointer;transition:.12s}
+  .quick button:hover{background:var(--yellow)}
+  .picked{margin-top:6px;background:var(--black);color:#fff;border-radius:12px;padding:14px 16px;font-size:14px}
+  .picked b{color:var(--yellow)}
+  .picked a{display:inline-block;margin-top:8px;background:var(--yellow);color:#000;font-weight:700;font-size:13px;text-decoration:none;border-radius:8px;padding:8px 14px}
+  #rMissing{margin:10px 0 0;color:#8a5a00;font-size:13px}
   #v-reservar .btn{display:block;width:100%}
   .chosen{background:#fffbe6;border:1px dashed var(--yellow-d);border-radius:10px;padding:12px 14px;font-size:14px;margin-bottom:16px}
   #rMsg{margin-top:12px;font-size:14px;font-weight:500}
@@ -833,16 +856,24 @@
   <div class="phead"><div class="wrap"><h1>Reserva tu <span>cita orientativa</span></h1><p>Una primera conversación de 30 minutos con Matías para conocer tu caso y ver cómo puede ayudarte. Elige el día y la hora que mejor te vengan.</p></div></div>
   <main><div class="wrap">
     <div id="rBooking" class="rgrid">
-      <div>
-        <div class="box">
+      <div class="box picker">
+        <div class="pcol">
           <h2><span class="nn">1</span> Elige el día</h2>
           <div id="rCal"><div class="spin">Cargando disponibilidad…</div></div>
-          <div class="legend">Los días resaltados tienen horas libres. Horario de España (Madrid).</div>
+          <div class="legend">Los días resaltados tienen huecos libres; el número pequeño indica cuántos. Horario de España (Madrid).</div>
         </div>
-        <div class="box" id="rSlotsBox" style="margin-top:22px;display:none">
+        <div class="pcol pcol2" id="rSlotsBox">
           <h2><span class="nn">2</span> Elige la hora</h2>
-          <div id="rSlotsTitle" class="hint" style="margin-bottom:12px"></div>
-          <div id="rSlots" class="slots"></div>
+          <div id="rSlotsEmpty">
+            <div class="empty-pick"><span class="arrow">👈</span><p>Elige un día resaltado en el calendario y aquí verás sus horas libres.</p></div>
+            <div class="quick-t">⚡ O elige directamente uno de los próximos huecos:</div>
+            <div class="quick" id="rQuick"></div>
+          </div>
+          <div id="rSlotsWrap" style="display:none">
+            <div id="rSlotsTitle" class="day-title"></div>
+            <div id="rSlots"></div>
+          </div>
+          <div class="picked" id="rPicked" style="display:none"></div>
         </div>
       </div>
       <form class="box" id="fRes" novalidate>
@@ -867,6 +898,7 @@
         <div class="hp" aria-hidden="true"><label>Web</label><input name="web" tabindex="-1" autocomplete="off"></div>
         <label class="chk"><input type="checkbox" id="rConsent"> <span>He leído y acepto la <a href="#" data-dlg="d-priv">política de privacidad</a> y que Matías Torres use mis datos para responder a esta solicitud. *</span></label>
         <button class="btn" id="rSend" type="submit" disabled>Solicitar esta cita</button>
+        <p id="rMissing" role="status" aria-live="polite"></p>
         <div id="rMsg" role="status"></div>
         <p class="small">Esto es una solicitud: la cita queda confirmada cuando Matías te escriba por email.</p>
       </form>
@@ -924,7 +956,7 @@
     </div>
   </div>
   <div class="igcard">
-    <div class="igbox ph" id="igBox">
+    <div class="igbox ig-wait" id="igBox">
       <div class="igph">
         <div class="igph-grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <div class="igph-cta">
@@ -1257,7 +1289,7 @@ $$("[data-dlg]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();do
 
 /* ============ instagram (se carga solo tras un clic) ============ */
 $("#igLoad").addEventListener("click",()=>{
-  const box=$("#igBox"); box.classList.remove("ph");
+  const box=$("#igBox"); box.classList.remove("ig-wait");
   box.innerHTML='<iframe src="https://www.instagram.com/matiastorresep/embed/" title="Instagram @matiastorresep" loading="lazy" scrolling="yes"></iframe>';
 });
 
@@ -1283,7 +1315,7 @@ let byDay={}, selDay=null, selSlot=null, rview=null;
 
 function initBooking(){
   $("#rBooking").style.display="grid"; $("#rDone").style.display="none";
-  selDay=null; selSlot=null; $("#rSlotsBox").style.display="none"; $("#rMsg").textContent="";
+  selDay=null; selSlot=null; $("#rSlotsWrap").style.display="none"; $("#rSlotsEmpty").style.display="block"; $("#rPicked").style.display="none"; $("#rMsg").textContent="";
   updateChosen(); loadSlots();
 }
 async function loadSlots(){
@@ -1295,7 +1327,7 @@ async function loadSlots(){
     const first=Object.keys(byDay).sort()[0];
     if(!first){ $("#rCal").innerHTML='<p class="hint">Ahora mismo no hay horas libres. Escríbenos por WhatsApp o email y buscamos un hueco.</p>'; return; }
     const [y,m]=first.split("-").map(Number); rview={y,m:m-1};
-    drawCal();
+    drawCal(); drawQuick();
   }catch(e){ $("#rCal").innerHTML='<p class="hint" style="color:var(--danger)">No se pudo cargar la agenda. Inténtalo de nuevo en unos minutos.</p>'; }
 }
 function drawCal(){
@@ -1307,33 +1339,56 @@ function drawCal(){
   for(let i=0;i<firstDow;i++) h+="<span></span>";
   for(let d=1;d<=n;d++){
     const k=`${cur}-${String(d).padStart(2,"0")}`;
-    h+= byDay[k] ? `<button type="button" class="d free ${k===selDay?"sel":""}" data-k="${k}">${d}</button>` : `<span class="d">${d}</span>`;
+    h+= byDay[k] ? `<button type="button" class="d free ${k===selDay?"sel":""}" data-k="${k}" title="${byDay[k].length} huecos libres" aria-label="${d}: ${byDay[k].length} huecos libres">${d}<small>${byDay[k].length}</small></button>` : `<span class="d">${d}</span>`;
   }
   $("#rCal").innerHTML=h+"</div>";
   $("#rPrev").onclick=()=>{rview=m===0?{y:y-1,m:11}:{y,m:m-1};drawCal()};
   $("#rNext").onclick=()=>{rview=m===11?{y:y+1,m:0}:{y,m:m+1};drawCal()};
   $$("#rCal .d.free").forEach(b=>b.onclick=()=>pickDay(b.dataset.k));
 }
-function pickDay(k){
-  selDay=k; selSlot=null; drawCal(); updateChosen();
-  $("#rSlotsBox").style.display="block";
-  const list=byDay[k], t=nice(list[0]);
-  $("#rSlotsTitle").textContent=t[0].toUpperCase()+t.slice(1)+" · duración 30 min";
-  $("#rSlots").innerHTML=list.map((d,i)=>`<button type="button" class="slot" data-i="${i}">${hhmm(d)}</button>`).join("");
-  $$("#rSlots .slot").forEach(b=>b.onclick=()=>{
-    selSlot=list[+b.dataset.i];
-    $$("#rSlots .slot").forEach(x=>x.classList.toggle("sel",x===b));
-    updateChosen();
-    if(innerWidth<860) $("#fRes").scrollIntoView({behavior:"smooth",block:"start"});
+function drawQuick(){
+  const all=Object.values(byDay).flat().sort((a,b)=>a-b).slice(0,4);
+  const lbl=d=>d.toLocaleDateString("es-ES",{timeZone:TZ,weekday:"short",day:"numeric",month:"short"}).replace(".","");
+  $("#rQuick").innerHTML=all.map(d=>`<button type="button" data-t="${d.getTime()}">${lbl(d)} · ${hhmm(d)}</button>`).join("");
+  $$("#rQuick button").forEach(b=>b.onclick=()=>{
+    const d=new Date(+b.dataset.t), k=dkey(d), [y,m]=k.split("-").map(Number);
+    rview={y,m:m-1}; pickDay(k,true); chooseSlot(d,true);
   });
 }
+function pickDay(k,quiet){
+  selDay=k; selSlot=null; drawCal(); updateChosen();
+  $("#rSlotsEmpty").style.display="none"; $("#rSlotsWrap").style.display="block"; $("#rPicked").style.display="none";
+  const list=byDay[k], t=nice(list[0]);
+  $("#rSlotsTitle").textContent=t[0].toUpperCase()+t.slice(1)+" · 30 min";
+  const btn=d=>`<button type="button" class="slot" data-t="${d.getTime()}">${hhmm(d)}</button>`;
+  const grp=(label,arr)=>arr.length?`<div class="slot-g"><div class="slot-h">${label}<span>${arr.length} ${arr.length===1?"hueco":"huecos"}</span></div><div class="slots">${arr.map(btn).join("")}</div></div>`:"";
+  const hr=d=>+hhmm(d).slice(0,2);
+  $("#rSlots").innerHTML=grp("☀️ Mañana",list.filter(d=>hr(d)<14))+grp("🌙 Tarde",list.filter(d=>hr(d)>=14));
+  $$("#rSlots .slot").forEach(b=>b.onclick=()=>chooseSlot(list.find(d=>d.getTime()===+b.dataset.t)));
+  if(!quiet&&innerWidth<860) $("#rSlotsBox").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function chooseSlot(d,quiet){
+  selSlot=d;
+  $$("#rSlots .slot").forEach(x=>x.classList.toggle("sel",+x.dataset.t===d.getTime()));
+  updateChosen();
+  const p=$("#rPicked");
+  p.innerHTML=`✔ Has elegido <b>${nice(d)}</b> a las <b>${hhmm(d)}</b><br><a href="#" id="rGoForm">Continuar con mis datos ↓</a>`;
+  p.style.display="block";
+  $("#rGoForm").onclick=e=>{e.preventDefault();$("#fRes").scrollIntoView({behavior:"smooth",block:"start"});$("#rNombre").focus({preventScroll:true})};
+  if(innerWidth<860&&!quiet) setTimeout(()=>$("#fRes").scrollIntoView({behavior:"smooth",block:"start"}),250);
+}
 function updateChosen(){
-  $("#rChosen").innerHTML=selSlot?`📅 <b>${nice(selSlot)}</b> a las <b>${hhmm(selSlot)}</b>`:"Elige primero un día y una hora.";
+  $("#rChosen").innerHTML=selSlot?`📅 <b>${nice(selSlot)}</b> a las <b>${hhmm(selSlot)}</b>`:(selDay?"Ahora elige una hora en el paso 2.":"Elige primero un día y una hora.");
   checkForm();
 }
 function checkForm(){
-  const f=$("#fRes");
-  $("#rSend").disabled=!(selSlot&&f.nombre.value.trim().length>1&&/^\S+@\S+\.\S+$/.test(f.email.value.trim())&&$("#rConsent").checked);
+  const f=$("#fRes"), miss=[], em=f.email.value.trim();
+  if(!selSlot) miss.push(selDay?"elegir una hora (paso 2)":"elegir un día y una hora");
+  if(f.nombre.value.trim().length<2) miss.push("tu nombre");
+  if(!/^\S+@\S+\.\S+$/.test(em)) miss.push(em?"un email válido (ej. nombre@correo.com)":"tu email");
+  if(!$("#rConsent").checked) miss.push("aceptar la política de privacidad");
+  $("#rSend").disabled=miss.length>0;
+  $("#rMissing").textContent=miss.length?"Para enviar falta: "+miss.join(" · ")+".":"";
 }
 $("#fRes").addEventListener("input",checkForm);
 $("#fRes").addEventListener("submit",async e=>{
