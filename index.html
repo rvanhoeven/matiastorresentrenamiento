@@ -1190,7 +1190,7 @@
     </div>
     <div class="card">
       <h2>Pagos</h2><p class="sub">Del más reciente al más antiguo.</p>
-      <div class="tools"><span class="count" id="pgCount" style="margin-left:0"></span></div>
+      <div class="tools"><input id="pgSearch" type="search" placeholder="Buscar pagos por nombre de cliente…" aria-label="Buscar pagos por cliente"><span class="count" id="pgCount"></span></div>
       <div style="overflow-x:auto"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Nota</th><th style="text-align:right">Importe</th><th></th></tr></thead><tbody id="pgBody"></tbody></table></div>
     </div>
   </div>
@@ -1874,13 +1874,20 @@ $("#pgList").addEventListener("mousedown",e=>{
   e.preventDefault(); pgSelect(clients.find(c=>c.id===it.dataset.id));
 });
 $("#pgQ").addEventListener("blur",()=>setTimeout(()=>pgList(false),120));
+let pagos=[];
+function renderPagos(){
+  const q=norm($("#pgSearch").value.trim());
+  const rows=pagos.filter(r=>!q||q.split(/\s+/).every(w=>norm(r.clients?r.clients.first_name+" "+r.clients.surname:"").includes(w)));
+  const tot=rows.reduce((t,r)=>t+Number(r.importe),0);
+  $("#pgBody").innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.fecha.split("-").reverse().join("/"))}</td><td class="name">${r.clients?esc(r.clients.first_name+" "+r.clients.surname):"—"}</td><td>${r.concepto&&r.concepto!==PAGO?esc(r.concepto):'<span style="color:var(--muted)">—</span>'}</td><td style="text-align:right;font-weight:600" class="pos">${esc(eur(r.importe))}</td><td class="act"><button type="button" class="ibtn del" onclick="delPago('${r.id}')" title="Eliminar pago" aria-label="Eliminar pago">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="5" class="empty">${pagos.length?"Ningún pago coincide con la búsqueda.":"Todavía no hay pagos registrados."}</td></tr>`;
+  $("#pgCount").textContent=rows.length?rows.length+(rows.length===1?" pago":" pagos")+" · total "+eur(tot):"";
+}
+$("#pgSearch").addEventListener("input",renderPagos);
 async function loadPagos(){
   try{
     if(!clients.length) await loadClients();
     const rows=await api("/movimientos?select=id,fecha,concepto,importe,client_id,clients(first_name,surname)&tipo=eq."+encodeURIComponent(PAGO)+"&order=fecha.desc,created_at.desc");
-    const tot=rows.reduce((t,r)=>t+Number(r.importe),0);
-    $("#pgBody").innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.fecha.split("-").reverse().join("/"))}</td><td class="name">${r.clients?esc(r.clients.first_name+" "+r.clients.surname):"—"}</td><td>${r.concepto&&r.concepto!==PAGO?esc(r.concepto):'<span style="color:var(--muted)">—</span>'}</td><td style="text-align:right;font-weight:600" class="pos">${esc(eur(r.importe))}</td><td class="act"><button type="button" class="ibtn del" onclick="delPago('${r.id}')" title="Eliminar pago" aria-label="Eliminar pago">${IC.trash}</button></td></tr>`).join(""):'<tr><td colspan="5" class="empty">Todavía no hay pagos registrados.</td></tr>';
-    $("#pgCount").textContent=rows.length?rows.length+(rows.length===1?" pago":" pagos")+" · total "+eur(tot):"";
+    pagos=rows; renderPagos();
   }catch(e){toast("Error al cargar pagos: "+e.message,true)}
 }
 window.delPago=async id=>{
