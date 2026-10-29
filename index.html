@@ -446,6 +446,8 @@
   #admin tr.click:hover td{background:#fffbe6}
   #admin tr.click:hover td:first-child{box-shadow:inset 4px 0 0 var(--yellow)}
   #admin tr.click:focus-visible{outline:2px solid var(--yellow-d);outline-offset:-2px}
+  #admin td.num{white-space:nowrap;text-align:right}
+  #c-lista th:nth-child(4),#c-lista th:nth-child(5){text-align:right;white-space:nowrap}
   #admin td.act{white-space:nowrap;text-align:right;width:1%}
   #admin .ibtn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--line);background:#fff;display:inline-grid;place-items:center;cursor:pointer;color:#555;transition:.15s;padding:0;vertical-align:middle}
   #admin .ibtn svg{width:16px;height:16px}
@@ -1051,7 +1053,7 @@
     <div class="card sub-panel on" id="c-lista">
       <h2>Lista de clientes</h2><p class="sub">Todo lo que hay ahora mismo en la base de datos. Haz clic en un cliente para ver su ficha.</p>
       <div class="tools"><input id="q" placeholder="Buscar por nombre, teléfono, email o nota…"><button class="btn ghost" id="reload">↻ Actualizar</button><span class="count" id="ccount"></span></div>
-      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Móvil</th><th>Email</th><th>Perfil / Notas</th><th></th></tr></thead><tbody id="ctbody"></tbody></table></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Móvil</th><th>Email</th><th>Ses./sem.</th><th>€ / sesión</th><th>Perfil / Notas</th><th></th></tr></thead><tbody id="ctbody"></tbody></table></div>
     </div>
     <div class="card sub-panel" id="c-add">
       <h2>Añadir cliente</h2><p class="sub">Nombre y apellidos son obligatorios.</p>
@@ -1060,6 +1062,8 @@
         <div><label>Apellidos *</label><input name="surname" required></div>
         <div><label>Móvil</label><input name="mobile_number" placeholder="+34 6XX XXX XXX"></div>
         <div><label>Email</label><input name="email" type="email"></div>
+        <div><label>Sesiones por semana</label><input name="sessions_per_week" type="number" min="0" max="14" step="1" inputmode="numeric" placeholder="Ej.: 2"></div>
+        <div><label>Precio por sesión (€)</label><input name="price_per_session" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ej.: 45"></div>
         <div class="full"><label>Perfil / Notas</label><textarea name="profile_notes" placeholder="Objetivos, lesiones, rehabilitación…"></textarea></div>
         <div class="full row" style="margin-top:0"><button class="btn" type="submit">Guardar cliente</button><button class="btn ghost" type="reset">Limpiar</button></div>
       </form>
@@ -1072,6 +1076,8 @@
         <div><label>Apellidos *</label><input name="surname" required></div>
         <div><label>Móvil</label><input name="mobile_number"></div>
         <div><label>Email</label><input name="email" type="email"></div>
+        <div><label>Sesiones por semana</label><input name="sessions_per_week" type="number" min="0" max="14" step="1" inputmode="numeric" placeholder="Ej.: 2"></div>
+        <div><label>Precio por sesión (€)</label><input name="price_per_session" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ej.: 45"></div>
         <div class="full"><label>Perfil / Notas</label><textarea name="profile_notes"></textarea></div>
         <div class="full row" style="margin-top:0"><button class="btn" type="submit">Guardar cambios</button></div>
       </form>
@@ -1463,7 +1469,7 @@ async function loadClients(){
 function renderClients(){
   const q=$("#q").value.trim().toLowerCase();
   const rows=clients.filter(c=>!q||[c.first_name,c.surname,c.mobile_number,c.email,c.profile_notes].join(" ").toLowerCase().includes(q));
-  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click" data-id="${c.id}" tabindex="0" title="Haz clic para ver la ficha"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="5" class="empty">No hay clientes que mostrar.</td></tr>`;
+  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click" data-id="${c.id}" tabindex="0" title="Haz clic para ver la ficha"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="num">${c.sessions_per_week??"—"}</td><td class="num">${c.price_per_session!=null?eur(c.price_per_session):"—"}</td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="7" class="empty">No hay clientes que mostrar.</td></tr>`;
   $("#ccount").textContent=rows.length+" de "+clients.length+" clientes";
   const opts=clients.map(c=>`<option value="${c.id}">${esc(c.first_name)} ${esc(c.surname)}</option>`).join("");
   const ke=$("#selEdit").value,kd=$("#selDel").value,kc=$("#selCita").value;
@@ -1473,7 +1479,7 @@ function renderClients(){
   if(clients.some(c=>c.id===kc))$("#selCita").value=kc;
   fillEdit();fillDel();
 }
-function fillEdit(){const c=clients.find(x=>x.id===$("#selEdit").value),f=$("#fEdit");["first_name","surname","mobile_number","email","profile_notes"].forEach(k=>f[k].value=c?c[k]??"":"")}
+function fillEdit(){const c=clients.find(x=>x.id===$("#selEdit").value),f=$("#fEdit");["first_name","surname","mobile_number","email","sessions_per_week","price_per_session","profile_notes"].forEach(k=>f[k].value=c?c[k]??"":"")}
 function fillDel(){const c=clients.find(x=>x.id===$("#selDel").value);$("#delPrev").innerHTML=c?`<b>${esc(c.first_name)} ${esc(c.surname)}</b><br>${esc(c.mobile_number)} · ${esc(c.email)}<br><span style="color:#555">${esc(c.profile_notes)}</span>`:"No hay clientes."}
 $("#fAdd").addEventListener("submit",async e=>{e.preventDefault();try{await api("/clients",{method:"POST",...MIN,body:JSON.stringify(clean(e.target))});e.target.reset();toast("Cliente añadido ✓");loadClients()}catch(er){toast("Error: "+er.message,true)}});
 $("#fEdit").addEventListener("submit",async e=>{e.preventDefault();const id=$("#selEdit").value;if(!id)return;try{await api("/clients?id=eq."+id,{method:"PATCH",...MIN,body:JSON.stringify(clean(e.target))});toast("Cambios guardados ✓");loadClients()}catch(er){toast("Error: "+er.message,true)}});
@@ -1512,6 +1518,8 @@ async function openClient(id){
   $("#clBody").innerHTML=`
     <div class="cl-row">${IC.phone}<div><small>Móvil</small>${c.mobile_number?`<a href="tel:${esc(num)}">${esc(c.mobile_number)}</a>${wa?`<a class="wa" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>`:""}`:none}</div></div>
     <div class="cl-row">${IC.mail}<div><small>Email</small>${c.email?`<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`:none}</div></div>
+    <div class="cl-row">${IC.cal}<div><small>Sesiones por semana</small>${c.sessions_per_week!=null?esc(c.sessions_per_week)+(c.sessions_per_week===1?" sesión":" sesiones"):none}</div></div>
+    <div class="cl-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 7a6 6 0 1 0 0 10M4 10h9M4 14h9"/></svg><div><small>Precio por sesión</small>${c.price_per_session!=null?esc(eur(c.price_per_session)):none}</div></div>
     <div class="cl-row">${IC.tag}<div><small>Perfil / Notas</small><div class="cl-notes">${c.profile_notes?esc(c.profile_notes):none}</div></div></div>
     <h4>Citas</h4><div id="clCitas"><span class="small">Cargando…</span></div>`;
   $("#clEdit").onclick=()=>{d.close();editClient(id)};
