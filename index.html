@@ -507,6 +507,26 @@
   #d-client .btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
   #d-client .btn.danger{background:#fff;border:1.5px solid #f0b5b5;color:var(--danger)}
   #d-client .btn.danger:hover{background:var(--danger);color:#fff}
+  #d-mail{width:min(94vw,600px);padding:0;overflow:hidden}
+  #d-mail .ml-head{display:flex;gap:12px;align-items:center;background:var(--black);color:#fff;padding:18px 24px;border-bottom:4px solid var(--yellow)}
+  #d-mail .ml-head svg{width:26px;height:26px;color:var(--yellow);flex:none}
+  #d-mail h3{font-size:22px;color:#fff;margin:0}
+  #d-mail .ml-body{padding:18px 24px 4px;max-height:66vh;overflow:auto;display:grid;gap:12px}
+  #d-mail label{display:block;font:600 11px 'Poppins';text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+  #d-mail input,#d-mail select,#d-mail textarea{width:100%;font:400 14.5px 'Poppins';padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+  #d-mail textarea{min-height:210px;resize:vertical;line-height:1.55}
+  #d-mail input:focus,#d-mail select:focus,#d-mail textarea:focus{outline:0;border-color:var(--yellow);box-shadow:0 0 0 3px rgba(255,213,31,.35)}
+  #d-mail .ml-note{font-size:12.5px;color:var(--muted)}
+  #d-mail .ml-foot{display:flex;gap:10px;justify-content:flex-end;padding:14px 24px 20px}
+  #d-mail .ml-foot .btn{padding:11px 18px;font-size:13px}
+  #d-mail .btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  #d-client .cl-mail{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-left:4px solid #bdbdb5;border-radius:8px;margin-bottom:6px;font-size:13.5px}
+  #d-client .cl-mail>div{min-width:0}#d-client .cl-mail b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #d-client .cl-mail span.d{color:var(--muted);font-size:12px}
+  #d-client .cl-mail .rt{flex:none;display:flex;gap:8px;align-items:center}
+  #d-client .cl-mail button{font:600 12px 'Poppins';border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:3px 10px;cursor:pointer}
+  #d-client .cl-mail button:hover{background:var(--yellow);border-color:var(--yellow)}
+  #d-client .cl-foot .btn svg{width:15px;height:15px;vertical-align:-2px;margin-right:6px}
   #d-confirm{width:min(92vw,480px)}
   #d-confirm .dc-head{display:flex;gap:14px;align-items:flex-start}
   #d-confirm .dc-ic{font-size:30px;line-height:1}
@@ -1161,8 +1181,9 @@
 </div>
 </div>
 
-<dialog id="d-client" aria-labelledby="clName"><div class="cl-head"><div class="cl-av" id="clAv"></div><div><h3 id="clName"></h3><div class="cl-since" id="clSince"></div></div><button type="button" class="cl-x" id="clX" aria-label="Cerrar">×</button></div><div class="cl-body" id="clBody"></div><div class="cl-foot"><button type="button" class="btn danger" id="clDel">Eliminar</button><button type="button" class="btn ghost" id="clEdit">Editar</button><button type="button" class="btn" id="clClose">Cerrar</button></div></dialog>
+<dialog id="d-client" aria-labelledby="clName"><div class="cl-head"><div class="cl-av" id="clAv"></div><div><h3 id="clName"></h3><div class="cl-since" id="clSince"></div></div><button type="button" class="cl-x" id="clX" aria-label="Cerrar">×</button></div><div class="cl-body" id="clBody"></div><div class="cl-foot"><button type="button" class="btn danger" id="clDel">Eliminar</button><button type="button" class="btn ghost" id="clMail"></button><button type="button" class="btn ghost" id="clEdit">Editar</button><button type="button" class="btn" id="clClose">Cerrar</button></div></dialog>
 <dialog id="d-confirm" aria-labelledby="dcTitle"><div class="dc-head"><span class="dc-ic" id="dcIcon">⚠️</span><div><h3 id="dcTitle"></h3><div class="dc-body" id="dcBody"></div></div></div><div class="dc-row"><button type="button" class="btn ghost" id="dcCancel">Cancelar</button><button type="button" class="btn" id="dcOk">Aceptar</button></div></dialog>
+<dialog id="d-mail" aria-labelledby="mlTitle"><form method="dialog" id="fMail" novalidate><div class="ml-head"><span id="mlIc"></span><h3 id="mlTitle">Enviar email</h3></div><div class="ml-body"><div><label for="mlTo">Para</label><input id="mlTo" type="email" autocomplete="off"></div><div><label for="mlTpl">Plantilla</label><select id="mlTpl"></select></div><div><label for="mlSub">Asunto</label><input id="mlSub" maxlength="200"></div><div><label for="mlMsg">Mensaje</label><textarea id="mlMsg" maxlength="5000"></textarea></div><div class="ml-note">El mensaje se guarda en la ficha del cliente y se envía desde el Gmail de Matías.</div></div><div class="ml-foot"><button type="button" class="btn ghost" id="mlCancel">Cancelar</button><button type="submit" class="btn" id="mlSend">Enviar email</button></div></form></dialog>
 <div class="toast" id="toast"></div>
 
 <script id="fotos">
@@ -1510,7 +1531,10 @@ async function openClient(id){
     <div class="cl-row">${IC.cal}<div><small>Sesiones por semana</small>${c.sessions_per_week!=null?esc(c.sessions_per_week)+(c.sessions_per_week===1?" sesión":" sesiones"):none}</div></div>
     <div class="cl-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 7a6 6 0 1 0 0 10M4 10h9M4 14h9"/></svg><div><small>Precio por sesión</small>${c.price_per_session!=null?esc(eur(c.price_per_session)):none}</div></div>
     <div class="cl-row">${IC.tag}<div><small>Perfil / Notas</small><div class="cl-notes">${c.profile_notes?esc(c.profile_notes):none}</div></div></div>
-    <h4>Citas</h4><div id="clCitas"><span class="small">Cargando…</span></div>`;
+    <h4>Citas</h4><div id="clCitas"><span class="small">Cargando…</span></div>
+    <h4>Emails</h4><div id="clMails"><span class="small">Cargando…</span></div>`;
+  $("#clMail").innerHTML=IC.mail+"Email"; $("#clMail").onclick=()=>openMail(id);
+  loadClMails(id);
   $("#clEdit").onclick=()=>{d.close();editClient(id)};
   $("#clDel").onclick=()=>{d.close();askDelClient(id)};
   $("#clClose").onclick=$("#clX").onclick=()=>d.close();
@@ -1523,6 +1547,70 @@ async function openClient(id){
       const cls=r.estado==="Confirmada"?"p-ok":r.estado==="Pendiente"?"p-pen":"p-can";
       return `<div class="cl-cita"><div><b>${esc(fFecha(r.fecha_hora))}</b> · ${esc(fHora(r.fecha_hora))}<br><span>${esc(r.tipo)}</span></div><span class="pill ${cls}">${esc(r.estado)}</span></div>`}).join(""):'<span class="small">Todavía no tiene citas.</span>';
   }catch(_){ if($("#clCitas")) $("#clCitas").innerHTML='<span class="small">No se pudieron cargar las citas.</span>'; }
+}
+
+/* emails desde la ficha: se guardan en la tabla "correos" y se envían por el Gmail de Matías */
+const MAIL_TPL=[
+ {k:"",t:"— Mensaje en blanco —",s:"",b:""},
+ {k:"rec",t:"Recordatorio de cita",s:"Recordatorio de tu sesión, {n} 💪",b:"Hola, {n}:\n\nTe escribo para recordarte tu próxima sesión. Si necesitas cambiar la hora, respóndeme a este correo o escríbeme por WhatsApp y lo vemos sin problema.\n\n¡Nos vemos pronto!\n\nUn abrazo,\nMatías Torres\nEntrenador personal · Orihuela"},
+ {k:"seg",t:"Seguimiento tras la sesión",s:"¿Qué tal te has sentido, {n}?",b:"Hola, {n}:\n\n¡Buen trabajo en la sesión de hoy! Quería saber cómo te has sentido y si has notado alguna molestia. Tu opinión me ayuda a ajustar el plan a tu medida.\n\nSi tienes cualquier duda, aquí estoy.\n\nUn abrazo,\nMatías Torres\nEntrenador personal · Orihuela"},
+ {k:"hor",t:"Cambio de horario",s:"Cambio de horario de tu sesión",b:"Hola, {n}:\n\nNecesito proponerte un pequeño cambio de horario para nuestra próxima sesión. ¿Te vendría bien [día] a las [hora]? Si no, dime qué te encaja mejor y lo organizamos.\n\n¡Gracias por tu flexibilidad!\n\nUn abrazo,\nMatías Torres\nEntrenador personal · Orihuela"},
+ {k:"nue",t:"Bienvenida",s:"¡Bienvenido/a, {n}! 🎉",b:"Hola, {n}:\n\n¡Qué alegría tenerte con nosotros! Estoy deseando empezar a trabajar juntos, con calma y a tu medida. Si quieres comentarme algo antes de la primera sesión (objetivos, lesiones, horarios), respóndeme a este correo.\n\nUn abrazo,\nMatías Torres\nEntrenador personal · Orihuela"}
+];
+let mailClient=null;
+const mailOk=e=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e);
+function openMail(id){
+  const c=clients.find(x=>x.id===id); if(!c) return;
+  mailClient=c;
+  $("#mlIc").innerHTML=IC.mail; $("#mlTitle").textContent="Email a "+c.first_name;
+  $("#mlTo").value=c.email||""; $("#mlSub").value=""; $("#mlMsg").value="";
+  $("#mlTpl").innerHTML=MAIL_TPL.map((t,i)=>`<option value="${i}">${esc(t.t)}</option>`).join("");
+  $("#mlTpl").onchange=()=>{const t=MAIL_TPL[+$("#mlTpl").value],n=c.first_name||"";$("#mlSub").value=t.s.replace(/\{n\}/g,n);$("#mlMsg").value=t.b.replace(/\{n\}/g,n)};
+  $("#mlCancel").onclick=()=>$("#d-mail").close();
+  $("#d-mail").showModal(); (c.email?$("#mlSub"):$("#mlTo")).focus();
+}
+async function sendCorreo(id){
+  try{
+    const t=await accessToken();
+    const r=await fetch(BASE+"/functions/v1/enviar-correo",{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+t,"Content-Type":"application/json"},body:JSON.stringify({id})});
+    return await r.json().catch(()=>null);
+  }catch(_){return null}
+}
+$("#fMail").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const to=$("#mlTo").value.trim(),sub=$("#mlSub").value.trim(),msg=$("#mlMsg").value.trim();
+  if(!mailOk(to)) return toast("Escribe un email válido en «Para»",true);
+  if(!sub) return toast("Falta el asunto",true);
+  if(!msg) return toast("Escribe el mensaje",true);
+  const btn=$("#mlSend"); btn.disabled=true; btn.textContent="Enviando…";
+  const c=mailClient;
+  try{
+    const rows=await api("/correos",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify({client_id:c.id,destinatario:to,asunto:sub,mensaje:msg})});
+    $("#d-mail").close();
+    const res=await sendCorreo(rows[0].id);
+    if(res&&res.sent) toast("Email enviado a "+to+" ✓");
+    else if(res&&res.reason==="provider_error") toast("Guardado, pero Gmail no lo pudo enviar. Puedes reintentarlo desde la ficha.",true);
+    else toast("Email guardado en la ficha. El envío por Gmail aún no está conectado.");
+  }catch(err){toast("No se pudo guardar el email",true)}
+  finally{btn.disabled=false;btn.textContent="Enviar email"}
+  if($("#d-client").open&&$("#d-client").dataset.id===c.id) loadClMails(c.id);
+});
+async function loadClMails(id){
+  const box=$("#clMails"); if(!box) return;
+  try{
+    const rows=await api("/correos?select=id,asunto,estado,error,created_at,destinatario,mensaje&client_id=eq."+id+"&order=created_at.desc&limit=10");
+    if($("#d-client").dataset.id!==id||!$("#clMails")) return;
+    $("#clMails").innerHTML=rows.length?rows.map(r=>{
+      const cls=r.estado==="Enviado"?"p-ok":r.estado==="Error"?"p-can":"p-pen";
+      const lab=r.estado==="Enviado"?"Enviado":r.estado==="Error"?"Error":"Pendiente";
+      return `<div class="cl-mail" style="border-left-color:${r.estado==="Enviado"?"#157a42":r.estado==="Error"?"#c0392b":"#FFD51F"}"><div><b title="${esc(r.error||"")}">${esc(r.asunto)}</b><span class="d">${esc(fCorta(r.created_at))}</span></div><div class="rt">${r.estado!=="Enviado"?`<button type="button" data-retry="${r.id}">Enviar</button>`:""}<span class="pill ${cls}">${lab}</span></div></div>`}).join(""):'<span class="small">Todavía no hay emails enviados.</span>';
+    $("#clMails").querySelectorAll("[data-retry]").forEach(b=>b.onclick=async()=>{
+      b.disabled=true;b.textContent="…";
+      const res=await sendCorreo(b.dataset.retry);
+      toast(res&&res.sent?"Email enviado ✓":(res&&res.reason==="not_configured"?"El envío por Gmail aún no está conectado.":"No se pudo enviar el email"),!(res&&res.sent)&&!(res&&res.reason==="not_configured"));
+      loadClMails(id);
+    });
+  }catch(_){ if($("#clMails")) $("#clMails").innerHTML='<span class="small">No se pudieron cargar los emails.</span>'; }
 }
 $("#selEdit").addEventListener("change",fillEdit);
 $("#q").addEventListener("input",renderClients);$("#reload").addEventListener("click",loadClients);
