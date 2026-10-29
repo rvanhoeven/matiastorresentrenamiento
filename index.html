@@ -1047,8 +1047,6 @@
     <div class="tabs" id="ctabs">
       <button data-st="c-lista" class="on">📋 Lista</button>
       <button data-st="c-add">➕ Añadir cliente</button>
-      <button data-st="c-edit">✏️ Editar cliente</button>
-      <button data-st="c-del">🗑️ Eliminar cliente</button>
     </div>
     <div class="card sub-panel on" id="c-lista">
       <h2>Lista de clientes</h2><p class="sub">Todo lo que hay ahora mismo en la base de datos. Haz clic en un cliente para ver su ficha.</p>
@@ -1081,12 +1079,6 @@
         <div class="full"><label>Perfil / Notas</label><textarea name="profile_notes"></textarea></div>
         <div class="full row" style="margin-top:0"><button class="btn" type="submit">Guardar cambios</button></div>
       </form>
-    </div>
-    <div class="card sub-panel" id="c-del">
-      <h2>Eliminar cliente</h2><p class="sub">Se eliminarán también sus citas. No se puede deshacer.</p>
-      <label>Cliente</label><select id="selDel"></select>
-      <div class="preview" id="delPrev"></div>
-      <div class="row"><button class="btn danger" id="btnDel">Eliminar cliente</button></div>
     </div>
   </div>
 
@@ -1472,17 +1464,15 @@ function renderClients(){
   $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click" data-id="${c.id}" tabindex="0" title="Haz clic para ver la ficha"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="num">${c.sessions_per_week??"—"}</td><td class="num">${c.price_per_session!=null?eur(c.price_per_session):"—"}</td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="7" class="empty">No hay clientes que mostrar.</td></tr>`;
   $("#ccount").textContent=rows.length+" de "+clients.length+" clientes";
   const opts=clients.map(c=>`<option value="${c.id}">${esc(c.first_name)} ${esc(c.surname)}</option>`).join("");
-  const ke=$("#selEdit").value,kd=$("#selDel").value,kc=$("#selCita").value;
-  $("#selEdit").innerHTML=opts;$("#selDel").innerHTML=opts;$("#selCita").innerHTML=opts;
+  const ke=$("#selEdit").value,kc=$("#selCita").value;
+  $("#selEdit").innerHTML=opts;$("#selCita").innerHTML=opts;
   if(clients.some(c=>c.id===ke))$("#selEdit").value=ke;
-  if(clients.some(c=>c.id===kd))$("#selDel").value=kd;
   if(clients.some(c=>c.id===kc))$("#selCita").value=kc;
-  fillEdit();fillDel();
+  fillEdit();
 }
 function fillEdit(){const c=clients.find(x=>x.id===$("#selEdit").value),f=$("#fEdit");["first_name","surname","mobile_number","email","sessions_per_week","price_per_session","profile_notes"].forEach(k=>f[k].value=c?c[k]??"":"")}
-function fillDel(){const c=clients.find(x=>x.id===$("#selDel").value);$("#delPrev").innerHTML=c?`<b>${esc(c.first_name)} ${esc(c.surname)}</b><br>${esc(c.mobile_number)} · ${esc(c.email)}<br><span style="color:#555">${esc(c.profile_notes)}</span>`:"No hay clientes."}
 $("#fAdd").addEventListener("submit",async e=>{e.preventDefault();try{await api("/clients",{method:"POST",...MIN,body:JSON.stringify(clean(e.target))});e.target.reset();toast("Cliente añadido ✓");loadClients()}catch(er){toast("Error: "+er.message,true)}});
-$("#fEdit").addEventListener("submit",async e=>{e.preventDefault();const id=$("#selEdit").value;if(!id)return;try{await api("/clients?id=eq."+id,{method:"PATCH",...MIN,body:JSON.stringify(clean(e.target))});toast("Cambios guardados ✓");loadClients()}catch(er){toast("Error: "+er.message,true)}});
+$("#fEdit").addEventListener("submit",async e=>{e.preventDefault();const id=$("#selEdit").value;if(!id)return;try{await api("/clients?id=eq."+id,{method:"PATCH",...MIN,body:JSON.stringify(clean(e.target))});toast("Cambios guardados ✓");loadClients();$('#ctabs button[data-st="c-lista"]').click()}catch(er){toast("Error: "+er.message,true)}});
 async function askDelClient(id){
   const c=clients.find(x=>x.id===id); if(!c) return;
   const ok=await askConfirm({title:"¿Eliminar cliente?",icon:"🗑️",danger:true,ok:"Sí, eliminar",
@@ -1496,7 +1486,6 @@ function editClient(id){
   $("#selEdit").value=id; fillEdit();
   window.scrollTo({top:0,behavior:"smooth"}); $("#fEdit").first_name.focus();
 }
-$("#btnDel").addEventListener("click",()=>askDelClient($("#selDel").value));
 $("#ctbody").addEventListener("click",e=>{
   const tr=e.target.closest("tr.click"); if(!tr) return;
   const b=e.target.closest("button[data-act]");
@@ -1535,7 +1524,7 @@ async function openClient(id){
       return `<div class="cl-cita"><div><b>${esc(fFecha(r.fecha_hora))}</b> · ${esc(fHora(r.fecha_hora))}<br><span>${esc(r.tipo)}</span></div><span class="pill ${cls}">${esc(r.estado)}</span></div>`}).join(""):'<span class="small">Todavía no tiene citas.</span>';
   }catch(_){ if($("#clCitas")) $("#clCitas").innerHTML='<span class="small">No se pudieron cargar las citas.</span>'; }
 }
-$("#selEdit").addEventListener("change",fillEdit);$("#selDel").addEventListener("change",fillDel);
+$("#selEdit").addEventListener("change",fillEdit);
 $("#q").addEventListener("input",renderClients);$("#reload").addEventListener("click",loadClients);
 
 /* citas */
