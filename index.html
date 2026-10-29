@@ -481,6 +481,30 @@
   #admin .sent{font-size:12px;color:#157a42;display:inline-flex;align-items:center;gap:5px}
   #admin .sent svg{width:14px;height:14px;flex:none}
   #admin .p-done{background:#e9e9e4;color:#555}
+  #d-client{width:min(94vw,580px);padding:0;overflow:hidden}
+  #d-client .cl-head{display:flex;gap:16px;align-items:center;background:var(--black);color:#fff;padding:22px 24px;border-bottom:4px solid var(--yellow)}
+  #d-client .cl-av{flex:none;width:58px;height:58px;border-radius:50%;background:var(--yellow);color:#000;display:grid;place-items:center;font:700 22px 'Oswald';letter-spacing:.04em}
+  #d-client h3{font-size:24px;color:#fff;margin:0 0 2px}
+  #d-client .cl-since{font-size:12.5px;color:#bdbdb5}
+  #d-client .cl-x{margin-left:auto;align-self:flex-start;background:none;border:0;color:#bdbdb5;font-size:26px;line-height:1;cursor:pointer;padding:0 4px}
+  #d-client .cl-x:hover{color:var(--yellow)}
+  #d-client .cl-body{padding:20px 24px 6px;max-height:60vh;overflow:auto}
+  #d-client .cl-row{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+  #d-client .cl-row>svg{width:18px;height:18px;flex:none;margin-top:3px;color:#8a6a00}
+  #d-client .cl-row small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  #d-client .cl-row a{color:var(--ink)}
+  #d-client .cl-row .wa{display:inline-block;margin-left:10px;font-size:12px;font-weight:600;background:#dff5e8;color:#157a42;border-radius:99px;padding:2px 10px;text-decoration:none}
+  #d-client .cl-notes{white-space:pre-wrap;line-height:1.55}
+  #d-client h4{font:600 13px 'Poppins';text-transform:uppercase;letter-spacing:.08em;color:#7a6200;margin:18px 0 8px}
+  #d-client .cl-cita{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-left:4px solid var(--yellow);border-radius:8px;margin-bottom:6px;font-size:13.5px}
+  #d-client .cl-cita span{color:var(--muted)}
+  #d-client .pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+  #d-client .p-ok{background:#dff5e8;color:#157a42}#d-client .p-pen{background:#fff2c2;color:#8a6a00}#d-client .p-can{background:#fde0e0;color:#a52a2a}
+  #d-client .cl-foot{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;padding:16px 24px 22px}
+  #d-client .cl-foot .btn{padding:11px 18px;font-size:13px}
+  #d-client .btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  #d-client .btn.danger{background:#fff;border:1.5px solid #f0b5b5;color:var(--danger)}
+  #d-client .btn.danger:hover{background:var(--danger);color:#fff}
   #d-confirm{width:min(92vw,480px)}
   #d-confirm .dc-head{display:flex;gap:14px;align-items:flex-start}
   #d-confirm .dc-ic{font-size:30px;line-height:1}
@@ -1025,7 +1049,7 @@
       <button data-st="c-del">🗑️ Eliminar cliente</button>
     </div>
     <div class="card sub-panel on" id="c-lista">
-      <h2>Lista de clientes</h2><p class="sub">Todo lo que hay ahora mismo en la base de datos. Haz clic en un cliente para editarlo.</p>
+      <h2>Lista de clientes</h2><p class="sub">Todo lo que hay ahora mismo en la base de datos. Haz clic en un cliente para ver su ficha.</p>
       <div class="tools"><input id="q" placeholder="Buscar por nombre, teléfono, email o nota…"><button class="btn ghost" id="reload">↻ Actualizar</button><span class="count" id="ccount"></span></div>
       <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Móvil</th><th>Email</th><th>Perfil / Notas</th><th></th></tr></thead><tbody id="ctbody"></tbody></table></div>
     </div>
@@ -1139,6 +1163,7 @@
 </div>
 </div>
 
+<dialog id="d-client" aria-labelledby="clName"><div class="cl-head"><div class="cl-av" id="clAv"></div><div><h3 id="clName"></h3><div class="cl-since" id="clSince"></div></div><button type="button" class="cl-x" id="clX" aria-label="Cerrar">×</button></div><div class="cl-body" id="clBody"></div><div class="cl-foot"><button type="button" class="btn danger" id="clDel">Eliminar</button><button type="button" class="btn ghost" id="clEdit">Editar</button><button type="button" class="btn" id="clClose">Cerrar</button></div></dialog>
 <dialog id="d-confirm" aria-labelledby="dcTitle"><div class="dc-head"><span class="dc-ic" id="dcIcon">⚠️</span><div><h3 id="dcTitle"></h3><div class="dc-body" id="dcBody"></div></div></div><div class="dc-row"><button type="button" class="btn ghost" id="dcCancel">Cancelar</button><button type="button" class="btn" id="dcOk">Aceptar</button></div></dialog>
 <div class="toast" id="toast"></div>
 
@@ -1438,7 +1463,7 @@ async function loadClients(){
 function renderClients(){
   const q=$("#q").value.trim().toLowerCase();
   const rows=clients.filter(c=>!q||[c.first_name,c.surname,c.mobile_number,c.email,c.profile_notes].join(" ").toLowerCase().includes(q));
-  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click" data-id="${c.id}" tabindex="0" title="Haz clic para editar"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="5" class="empty">No hay clientes que mostrar.</td></tr>`;
+  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click" data-id="${c.id}" tabindex="0" title="Haz clic para ver la ficha"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="5" class="empty">No hay clientes que mostrar.</td></tr>`;
   $("#ccount").textContent=rows.length+" de "+clients.length+" clientes";
   const opts=clients.map(c=>`<option value="${c.id}">${esc(c.first_name)} ${esc(c.surname)}</option>`).join("");
   const ke=$("#selEdit").value,kd=$("#selDel").value,kc=$("#selCita").value;
@@ -1469,9 +1494,39 @@ $("#btnDel").addEventListener("click",()=>askDelClient($("#selDel").value));
 $("#ctbody").addEventListener("click",e=>{
   const tr=e.target.closest("tr.click"); if(!tr) return;
   const b=e.target.closest("button[data-act]");
-  if(b&&b.dataset.act==="del") askDelClient(tr.dataset.id); else editClient(tr.dataset.id);
+  if(b&&b.dataset.act==="del") askDelClient(tr.dataset.id);
+  else if(b&&b.dataset.act==="edit") editClient(tr.dataset.id);
+  else openClient(tr.dataset.id);
 });
-$("#ctbody").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.matches("tr.click")) editClient(e.target.dataset.id) });
+$("#ctbody").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.matches("tr.click")) openClient(e.target.dataset.id) });
+
+/* ficha del cliente (ventana emergente) */
+async function openClient(id){
+  const c=clients.find(x=>x.id===id); if(!c) return;
+  const d=$("#d-client"); d.dataset.id=id;
+  $("#clAv").textContent=((c.first_name||"")[0]||"")+((c.surname||"")[0]||"");
+  $("#clName").textContent=c.first_name+" "+c.surname;
+  $("#clSince").textContent=c.created_at?"Cliente desde el "+new Date(c.created_at).toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"}):"";
+  const num=(c.mobile_number||"").replace(/[^\d+]/g,""), wa=num?"https://wa.me/"+(num.startsWith("+")?num.slice(1):(num.length===9?"34"+num:num)):"";
+  const none='<span style="color:var(--muted)">—</span>';
+  $("#clBody").innerHTML=`
+    <div class="cl-row">${IC.phone}<div><small>Móvil</small>${c.mobile_number?`<a href="tel:${esc(num)}">${esc(c.mobile_number)}</a>${wa?`<a class="wa" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>`:""}`:none}</div></div>
+    <div class="cl-row">${IC.mail}<div><small>Email</small>${c.email?`<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`:none}</div></div>
+    <div class="cl-row">${IC.tag}<div><small>Perfil / Notas</small><div class="cl-notes">${c.profile_notes?esc(c.profile_notes):none}</div></div></div>
+    <h4>Citas</h4><div id="clCitas"><span class="small">Cargando…</span></div>`;
+  $("#clEdit").onclick=()=>{d.close();editClient(id)};
+  $("#clDel").onclick=()=>{d.close();askDelClient(id)};
+  $("#clClose").onclick=$("#clX").onclick=()=>d.close();
+  d.onclick=e=>{if(e.target===d)d.close()};
+  d.showModal();
+  try{
+    const rows=await api("/citas?select=id,fecha_hora,tipo,estado&client_id=eq."+id+"&order=fecha_hora.desc&limit=10");
+    if(d.dataset.id!==id||!$("#clCitas")) return;
+    $("#clCitas").innerHTML=rows.length?rows.map(r=>{
+      const cls=r.estado==="Confirmada"?"p-ok":r.estado==="Pendiente"?"p-pen":"p-can";
+      return `<div class="cl-cita"><div><b>${esc(fFecha(r.fecha_hora))}</b> · ${esc(fHora(r.fecha_hora))}<br><span>${esc(r.tipo)}</span></div><span class="pill ${cls}">${esc(r.estado)}</span></div>`}).join(""):'<span class="small">Todavía no tiene citas.</span>';
+  }catch(_){ if($("#clCitas")) $("#clCitas").innerHTML='<span class="small">No se pudieron cargar las citas.</span>'; }
+}
 $("#selEdit").addEventListener("change",fillEdit);$("#selDel").addEventListener("change",fillDel);
 $("#q").addEventListener("input",renderClients);$("#reload").addEventListener("click",loadClients);
 
