@@ -447,7 +447,6 @@
   #admin tr.click:hover td:first-child{box-shadow:inset 4px 0 0 var(--yellow)}
   #admin tr.click:focus-visible{outline:2px solid var(--yellow-d);outline-offset:-2px}
   #admin td.num{white-space:nowrap;text-align:right}
-  #c-lista th:nth-child(4),#c-lista th:nth-child(5){text-align:right;white-space:nowrap}
   #admin td.act{white-space:nowrap;text-align:right;width:1%}
   #admin .ibtn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--line);background:#fff;display:inline-grid;place-items:center;cursor:pointer;color:#555;transition:.15s;padding:0;vertical-align:middle}
   #admin .ibtn svg{width:16px;height:16px}
@@ -461,6 +460,22 @@
   #admin .sw:focus-visible{outline:2px solid var(--yellow-d);outline-offset:2px}
   #admin tr.off td:not(.act):not(.tgl){opacity:.5}
   #admin td.tgl{text-align:center}
+  #admin .combo{position:relative}
+  #admin .combo-list{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1.5px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.18);max-height:260px;overflow:auto}
+  #admin .combo-list[hidden]{display:none}
+  #admin .combo-it{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:10px 14px;cursor:pointer;font-size:14.5px;border-bottom:1px solid var(--line)}
+  #admin .combo-it:last-child{border-bottom:0}
+  #admin .combo-it:hover{background:#fff7cc}
+  #admin .combo-it small{color:var(--muted);font-size:12.5px}
+  #admin .combo-no{padding:12px 14px;color:var(--muted);font-size:13.5px}
+  #admin .pg-sel{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13.5px;color:#157a42;background:#e9f8ef;border-radius:8px;padding:7px 12px}
+  #admin .pg-sel[hidden]{display:none}
+  #admin .pg-sel svg{width:16px;height:16px;flex:none}
+  #admin .citfil{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:#fff7cc;border-left:5px solid var(--yellow);border-radius:8px;padding:10px 14px;margin:8px 0 4px;font-size:14px}
+  #admin .citfil[hidden]{display:none}
+  #admin .citfil button{margin-left:auto;font:600 12px 'Poppins';border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;cursor:pointer}
+  #admin .citfil button:hover{background:var(--yellow);border-color:var(--yellow)}
+  #admin .cfilt{font:400 14px 'Poppins';padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;background:#fff}
   #admin .bdg{margin-left:auto;background:var(--danger);color:#fff;border-radius:99px;font:600 11px 'Poppins';min-width:20px;height:20px;display:inline-grid;place-items:center;padding:0 6px}
   #admin .bdg[hidden]{display:none}
   #admin .menu button.on .bdg{background:#000;color:var(--yellow)}
@@ -558,6 +573,7 @@
   #loginGate .login-error{min-height:24px;color:var(--danger);font-size:13px;margin:0 0 12px}
   #loginGate .btn{width:100%}
   #admin .top{gap:14px}
+  @media(max-width:700px){#admin .top{padding:12px 16px}#admin .top .who{display:none}#admin .top h1{font-size:19px;min-width:0}}
   #admin .logout{background:transparent;color:var(--yellow);border:1px solid var(--yellow);border-radius:8px;padding:8px 12px;font:500 12px 'Poppins';cursor:pointer;white-space:nowrap}
   #admin .logout:hover{background:var(--yellow);color:#000}
 </style>
@@ -1077,8 +1093,8 @@
     </div>
     <div class="card sub-panel on" id="c-lista">
       <h2>Lista de clientes</h2><p class="sub">Todo lo que hay ahora mismo en la base de datos. Haz clic en un cliente para ver su ficha.</p>
-      <div class="tools"><input id="q" placeholder="Buscar por nombre, teléfono, email o nota…"><button class="btn ghost" id="reload">↻ Actualizar</button><span class="count" id="ccount"></span></div>
-      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Móvil</th><th>Email</th><th>Ses./sem.</th><th>€ / sesión</th><th style="text-align:center">Activo</th><th>Perfil / Notas</th><th></th></tr></thead><tbody id="ctbody"></tbody></table></div>
+      <div class="tools"><input id="q" placeholder="Buscar por nombre, teléfono, email o nota…"><select id="cfil" class="cfilt" aria-label="Filtrar clientes"><option value="act">Clientes activos</option><option value="ina">Clientes inactivos</option><option value="all">Todos los clientes</option></select><button class="btn ghost" id="reload">↻ Actualizar</button><span class="count" id="ccount"></span></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Móvil</th><th>Email</th><th style="text-align:center">Activo</th><th>Perfil / Notas</th><th></th></tr></thead><tbody id="ctbody"></tbody></table></div>
     </div>
     <div class="card sub-panel" id="c-add">
       <h2>Añadir cliente</h2><p class="sub">Nombre y apellidos son obligatorios.</p>
@@ -1122,7 +1138,8 @@
       </form>
     </div>
     <div class="card">
-      <h2>Agenda</h2><p class="sub">Próximas citas, ordenadas por fecha.</p>
+      <h2 id="citTitle">Agenda</h2><p class="sub" id="citSub">Próximas citas, ordenadas por fecha.</p>
+      <div class="citfil" id="citFil" hidden><span id="citFilTxt"></span><button type="button" id="citFilX">Ver todas las citas</button></div>
       <div class="tools"><span class="count" id="citcount" style="margin-left:0"></span></div>
       <div style="overflow-x:auto"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Estado</th><th>Notas</th><th></th></tr></thead><tbody id="citbody"></tbody></table></div>
     </div>
@@ -1157,35 +1174,24 @@
   </div>
 
   <div class="page" id="p-contabilidad">
-    <div class="kpis">
-      <div class="kpi in"><small>Ingresos</small><b id="kIn">—</b></div>
-      <div class="kpi out"><small>Gastos</small><b id="kOut">—</b></div>
-      <div class="kpi"><small>Balance</small><b id="kBal">—</b></div>
-    </div>
     <div class="card">
-      <h2>Ingresos y gastos por mes</h2><p class="sub">Resumen de los movimientos registrados.</p>
-      <div class="bars" id="bars"></div><div class="barlbl" id="barlbl"></div>
-      <div class="legend"><i style="background:var(--yellow)"></i>Ingresos<i style="background:#2b2b2b"></i>Gastos</div>
-    </div>
-    <div class="card">
-      <h2>Clientes activos</h2><p class="sub">Clientes marcados como activos y su tarifa. Para activar o desactivar a alguien, usa el interruptor en Clientes.</p>
-      <div class="tools"><span class="count" id="actCount"></span></div>
-      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Apellidos</th><th>Email</th><th>Teléfono</th><th style="text-align:right">Tarifa</th></tr></thead><tbody id="actbody"></tbody></table></div>
-    </div>
-    <div class="card">
-      <h2>Nuevo movimiento</h2><p class="sub">Registra un ingreso o un gasto.</p>
-      <form id="fMov" class="grid">
-        <div><label>Concepto *</label><input name="concepto" required></div>
-        <div><label>Tipo *</label><select name="tipo"><option>Ingreso</option><option>Gasto</option></select></div>
-        <div><label>Categoría</label><input name="categoria" placeholder="Bonos, alquiler, material…"></div>
-        <div><label>Importe (€) *</label><input name="importe" type="number" step="0.01" min="0" required></div>
-        <div><label>Fecha *</label><input name="fecha" type="date" required></div>
-        <div style="align-self:end"><button class="btn" type="submit">Guardar movimiento</button></div>
+      <h2>Nuevo pago</h2><p class="sub">Registra un pago a contado de un cliente activo.</p>
+      <form id="fPago" class="grid" novalidate>
+        <div class="full"><label for="pgQ">Cliente *</label>
+          <div class="combo"><input id="pgQ" autocomplete="off" placeholder="Escribe el nombre del cliente…" role="combobox" aria-expanded="false" aria-controls="pgList"><div class="combo-list" id="pgList" role="listbox" hidden></div></div>
+          <div class="pg-sel" id="pgSel" hidden></div>
+        </div>
+        <div><label>Tipo</label><input value="Pago a contado" readonly style="background:#f6f5ef"></div>
+        <div><label for="pgImp">Importe (€) *</label><input id="pgImp" name="importe" type="number" step="0.01" min="0.01" inputmode="decimal" required></div>
+        <div><label for="pgFecha">Fecha *</label><input id="pgFecha" name="fecha" type="date" required></div>
+        <div><label for="pgNota">Nota (opcional)</label><input id="pgNota" name="nota" maxlength="120" placeholder="Ej.: bono de 10 sesiones"></div>
+        <div class="full row" style="margin-top:0"><button class="btn" type="submit">Guardar pago</button></div>
       </form>
     </div>
     <div class="card">
-      <h2>Movimientos</h2>
-      <div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Categoría</th><th>Tipo</th><th style="text-align:right">Importe</th><th></th></tr></thead><tbody id="mbody"></tbody></table></div>
+      <h2>Pagos</h2><p class="sub">Del más reciente al más antiguo.</p>
+      <div class="tools"><span class="count" id="pgCount" style="margin-left:0"></span></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Nota</th><th style="text-align:right">Importe</th><th></th></tr></thead><tbody id="pgBody"></tbody></table></div>
     </div>
   </div>
 
@@ -1193,7 +1199,7 @@
 </div>
 </div>
 
-<dialog id="d-client" aria-labelledby="clName"><div class="cl-head"><div class="cl-av" id="clAv"></div><div><h3 id="clName"></h3><div class="cl-since" id="clSince"></div></div><button type="button" class="cl-x" id="clX" aria-label="Cerrar">×</button></div><div class="cl-body" id="clBody"></div><div class="cl-foot"><button type="button" class="btn danger" id="clDel">Eliminar</button><button type="button" class="btn ghost" id="clMail"></button><button type="button" class="btn ghost" id="clEdit">Editar</button><button type="button" class="btn" id="clClose">Cerrar</button></div></dialog>
+<dialog id="d-client" aria-labelledby="clName"><div class="cl-head"><div class="cl-av" id="clAv"></div><div><h3 id="clName"></h3><div class="cl-since" id="clSince"></div></div><button type="button" class="cl-x" id="clX" aria-label="Cerrar">×</button></div><div class="cl-body" id="clBody"></div><div class="cl-foot"><button type="button" class="btn danger" id="clDel">Eliminar</button><button type="button" class="btn ghost" id="clCitasBtn"></button><button type="button" class="btn ghost" id="clMail"></button><button type="button" class="btn ghost" id="clEdit">Editar</button><button type="button" class="btn" id="clClose">Cerrar</button></div></dialog>
 <dialog id="d-confirm" aria-labelledby="dcTitle"><div class="dc-head"><span class="dc-ic" id="dcIcon">⚠️</span><div><h3 id="dcTitle"></h3><div class="dc-body" id="dcBody"></div></div></div><div class="dc-row"><button type="button" class="btn ghost" id="dcCancel">Cancelar</button><button type="button" class="btn" id="dcOk">Aceptar</button></div></dialog>
 <dialog id="d-mail" aria-labelledby="mlTitle"><form method="dialog" id="fMail" novalidate><div class="ml-head"><span id="mlIc"></span><h3 id="mlTitle">Enviar email</h3></div><div class="ml-body"><div><label for="mlTo">Para</label><input id="mlTo" type="email" autocomplete="off"></div><div><label for="mlTpl">Plantilla</label><select id="mlTpl"></select></div><div><label for="mlSub">Asunto</label><input id="mlSub" maxlength="200"></div><div><label for="mlMsg">Mensaje</label><textarea id="mlMsg" maxlength="5000"></textarea></div><div class="ml-note">El mensaje se guarda en la ficha del cliente y se envía desde el Gmail de Matías.</div></div><div class="ml-foot"><button type="button" class="btn ghost" id="mlCancel">Cancelar</button><button type="submit" class="btn" id="mlSend">Enviar email</button></div></form></dialog>
 <div class="toast" id="toast"></div>
@@ -1475,10 +1481,15 @@ function openAdmin(p){
   $$("#admin .menu button").forEach(x=>x.classList.toggle("on",x.dataset.page===p));
   $$("#admin .page").forEach(x=>x.classList.toggle("on",x.id==="p-"+p));
   $("#ptitle").textContent=TITLES[p];
-  if(p==="clientes")loadClients(); if(p==="citas")loadCitas(); if(p==="solicitudes")loadSolicitudes(); if(p==="contabilidad"){loadMov();loadActivos()} if(p==="correo")renderMail();
+  if(p==="citas"){ if(!citKeep) citClient=null; citKeep=false }
+  if(p==="clientes")loadClients(); if(p==="citas")loadCitas(); if(p==="solicitudes")loadSolicitudes(); if(p==="contabilidad")loadPagos(); if(p==="correo")renderMail();
   if(p!=="solicitudes")refreshSolBadge();
 }
-$$("#admin .menu button").forEach(b=>b.addEventListener("click",()=>{location.hash="#gestion/"+b.dataset.page}));
+let citClient=null, citKeep=false;
+$$("#admin .menu button").forEach(b=>b.addEventListener("click",()=>{
+  if(b.dataset.page==="citas"){ citClient=null; if(location.hash==="#gestion/citas"){ openAdmin("citas"); return } }
+  location.hash="#gestion/"+b.dataset.page;
+}));
 $$("#ctabs button").forEach(b=>b.addEventListener("click",()=>{
   $$("#ctabs button").forEach(x=>x.classList.toggle("on",x===b));
   $$("#p-clientes .sub-panel").forEach(x=>x.classList.toggle("on",x.id===b.dataset.st));
@@ -1493,8 +1504,9 @@ async function loadClients(){
 }
 function renderClients(){
   const q=$("#q").value.trim().toLowerCase();
-  const rows=clients.filter(c=>!q||[c.first_name,c.surname,c.mobile_number,c.email,c.profile_notes].join(" ").toLowerCase().includes(q));
-  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click${c.activo===false?" off":""}" data-id="${c.id}" tabindex="0" title="Haz clic para ver la ficha"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="num">${c.sessions_per_week??"—"}</td><td class="num">${c.price_per_session!=null?eur(c.price_per_session):"—"}</td><td class="tgl"><button type="button" class="sw" role="switch" data-act="toggle" aria-checked="${c.activo!==false}" title="${c.activo!==false?"Cliente activo: clic para desactivar":"Cliente inactivo: clic para activar"}" aria-label="Activo: ${esc(c.first_name)} ${esc(c.surname)}"></button></td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="8" class="empty">No hay clientes que mostrar.</td></tr>`;
+  const fil=$("#cfil").value;
+  const rows=clients.filter(c=>(fil==="all"||(fil==="ina")===(c.activo===false))&&(!q||[c.first_name,c.surname,c.mobile_number,c.email,c.profile_notes].join(" ").toLowerCase().includes(q)));
+  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click${c.activo===false?" off":""}" data-id="${c.id}" tabindex="0" title="Haz clic para ver la ficha"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="tgl"><button type="button" class="sw" role="switch" data-act="toggle" aria-checked="${c.activo!==false}" title="${c.activo!==false?"Cliente activo: clic para desactivar":"Cliente inactivo: clic para activar"}" aria-label="Activo: ${esc(c.first_name)} ${esc(c.surname)}"></button></td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="6" class="empty">No hay clientes que mostrar.</td></tr>`;
   $("#ccount").textContent=rows.length+" de "+clients.length+" clientes";
   const opts=clients.map(c=>`<option value="${c.id}">${esc(c.first_name)} ${esc(c.surname)}</option>`).join("");
   const ke=$("#selEdit").value,kc=$("#selCita").value;
@@ -1539,6 +1551,10 @@ $("#ctbody").addEventListener("click",e=>{
 $("#ctbody").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.matches("tr.click")) openClient(e.target.dataset.id) });
 
 /* ficha del cliente (ventana emergente) */
+function verCitasDe(id){
+  citClient=id; citKeep=true; $("#d-client").close();
+  if(location.hash==="#gestion/citas") openAdmin("citas"); else location.hash="#gestion/citas";
+}
 async function openClient(id){
   const c=clients.find(x=>x.id===id); if(!c) return;
   const d=$("#d-client"); d.dataset.id=id;
@@ -1553,8 +1569,8 @@ async function openClient(id){
     <div class="cl-row">${IC.cal}<div><small>Sesiones por semana</small>${c.sessions_per_week!=null?esc(c.sessions_per_week)+(c.sessions_per_week===1?" sesión":" sesiones"):none}</div></div>
     <div class="cl-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 7a6 6 0 1 0 0 10M4 10h9M4 14h9"/></svg><div><small>Precio por sesión</small>${c.price_per_session!=null?esc(eur(c.price_per_session)):none}</div></div>
     <div class="cl-row">${IC.tag}<div><small>Perfil / Notas</small><div class="cl-notes">${c.profile_notes?esc(c.profile_notes):none}</div></div></div>
-    <h4>Citas</h4><div id="clCitas"><span class="small">Cargando…</span></div>
     <h4>Emails</h4><div id="clMails"><span class="small">Cargando…</span></div>`;
+  $("#clCitasBtn").innerHTML=IC.cal+"Citas"; $("#clCitasBtn").onclick=()=>verCitasDe(id);
   $("#clMail").innerHTML=IC.mail+"Email"; $("#clMail").onclick=()=>openMail(id);
   loadClMails(id);
   $("#clEdit").onclick=()=>{d.close();editClient(id)};
@@ -1562,13 +1578,6 @@ async function openClient(id){
   $("#clClose").onclick=$("#clX").onclick=()=>d.close();
   d.onclick=e=>{if(e.target===d)d.close()};
   d.showModal();
-  try{
-    const rows=await api("/citas?select=id,fecha_hora,tipo,estado&client_id=eq."+id+"&order=fecha_hora.desc&limit=10");
-    if(d.dataset.id!==id||!$("#clCitas")) return;
-    $("#clCitas").innerHTML=rows.length?rows.map(r=>{
-      const cls=r.estado==="Confirmada"?"p-ok":r.estado==="Pendiente"?"p-pen":"p-can";
-      return `<div class="cl-cita"><div><b>${esc(fFecha(r.fecha_hora))}</b> · ${esc(fHora(r.fecha_hora))}<br><span>${esc(r.tipo)}</span></div><span class="pill ${cls}">${esc(r.estado)}</span></div>`}).join(""):'<span class="small">Todavía no tiene citas.</span>';
-  }catch(_){ if($("#clCitas")) $("#clCitas").innerHTML='<span class="small">No se pudieron cargar las citas.</span>'; }
 }
 
 /* emails desde la ficha: se guardan en la tabla "correos" y se envían por el Gmail de Matías */
@@ -1635,23 +1644,28 @@ async function loadClMails(id){
   }catch(_){ if($("#clMails")) $("#clMails").innerHTML='<span class="small">No se pudieron cargar los emails.</span>'; }
 }
 $("#selEdit").addEventListener("change",fillEdit);
-$("#q").addEventListener("input",renderClients);$("#reload").addEventListener("click",loadClients);
+$("#q").addEventListener("input",renderClients);$("#cfil").addEventListener("change",renderClients);$("#reload").addEventListener("click",loadClients);
 
 /* citas */
 async function loadCitas(){
   try{
     if(!clients.length) await loadClients();
-    const rows=await api("/citas?select=*,clients(first_name,surname)&order=fecha_hora.asc");
+    const cc=citClient&&clients.find(x=>x.id===citClient), fn=cc?cc.first_name+" "+cc.surname:"";
+    $("#citFil").hidden=!cc; $("#citFilTxt").innerHTML=cc?"Citas de <b>"+esc(fn)+"</b> · de la más reciente a la más antigua":"";
+    $("#citTitle").textContent=cc?"Citas de "+fn:"Agenda";
+    $("#citSub").textContent=cc?"Todas sus citas de un vistazo.":"Próximas citas, ordenadas por fecha.";
+    const rows=await api("/citas?select=*,clients(first_name,surname)"+(cc?"&client_id=eq."+cc.id+"&order=fecha_hora.desc":"&order=fecha_hora.asc"));
     $("#citbody").innerHTML=rows.length?rows.map(c=>{
-      const f=new Date(c.fecha_hora).toLocaleString("es-ES",{weekday:"short",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+      const f=new Date(c.fecha_hora).toLocaleString("es-ES",{weekday:"short",day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
       const cls=c.estado==="Confirmada"?"p-ok":c.estado==="Pendiente"?"p-pen":"p-can";
       const n=c.clients?esc(c.clients.first_name+" "+c.clients.surname):"—";
-      return `<tr><td>${esc(f)}</td><td class="name">${n}</td><td>${esc(c.tipo)}</td><td><span class="pill ${cls}">${esc(c.estado)}</span></td><td class="notes">${esc(c.notas)}</td><td style="white-space:nowrap"><button class="btn ghost sm" onclick="cancelCita('${c.id}')">Cancelar</button> <button class="btn danger sm" onclick="delCita('${c.id}')">Borrar</button></td></tr>`}).join(""):`<tr><td colspan="6" class="empty">No hay citas.</td></tr>`;
+      return `<tr><td>${esc(f)}</td><td class="name">${n}</td><td>${esc(c.tipo)}</td><td><span class="pill ${cls}">${esc(c.estado)}</span></td><td class="notes">${esc(c.notas)}</td><td style="white-space:nowrap"><button class="btn ghost sm" onclick="cancelCita('${c.id}')">Cancelar</button> <button class="btn danger sm" onclick="delCita('${c.id}')">Borrar</button></td></tr>`}).join(""):`<tr><td colspan="6" class="empty">${cc?"Este cliente todavía no tiene citas.":"No hay citas."}</td></tr>`;
     $("#citcount").textContent=rows.length+" citas";
   }catch(e){toast("Error al cargar citas: "+e.message,true)}
 }
 window.cancelCita=async id=>{try{await api("/citas?id=eq."+id,{method:"PATCH",...MIN,body:JSON.stringify({estado:"Cancelada"})});toast("Cita cancelada");loadCitas()}catch(e){toast("Error: "+e.message,true)}};
 window.delCita=async id=>{if(!confirm("¿Borrar esta cita?"))return;try{await api("/citas?id=eq."+id,{method:"DELETE",...MIN});toast("Cita borrada");loadCitas()}catch(e){toast("Error: "+e.message,true)}};
+$("#citFilX").addEventListener("click",()=>{citClient=null;loadCitas()});
 $("#fCita").addEventListener("submit",async e=>{e.preventDefault();const d=clean(e.target);d.fecha_hora=new Date(d.fecha_hora).toISOString();try{await api("/citas",{method:"POST",...MIN,body:JSON.stringify(d)});e.target.reset();toast("Cita guardada ✓");loadCitas()}catch(er){toast("Error: "+er.message,true)}});
 
 /* solicitudes de cita */
@@ -1827,31 +1841,66 @@ function renderMail(){
 }
 $$("#admin .folders button").forEach(b=>b.addEventListener("click",()=>{folder=b.dataset.f;selMail=null;renderMail()}));
 
-/* contabilidad */
-async function loadMov(){
-  try{
-    const rows=await api("/movimientos?select=*&order=fecha.desc");
-    let ing=0,gas=0;const byM={};
-    rows.forEach(r=>{const v=Number(r.importe),k=r.fecha.slice(0,7);byM[k]=byM[k]||{i:0,g:0};if(r.tipo==="Ingreso"){ing+=v;byM[k].i+=v}else{gas+=v;byM[k].g+=v}});
-    $("#kIn").textContent=eur(ing);$("#kOut").textContent=eur(gas);
-    const bal=ing-gas;$("#kBal").textContent=eur(bal);$("#kBal").className=bal>=0?"pos":"neg";
-    const ks=Object.keys(byM).sort(),max=Math.max(1,...ks.flatMap(k=>[byM[k].i,byM[k].g]));
-    $("#bars").innerHTML=ks.map(k=>`<div class="bargrp"><div class="bp"><div class="bar i" style="height:${byM[k].i/max*100}%" title="Ingresos ${eur(byM[k].i)}"></div><div class="bar g" style="height:${byM[k].g/max*100}%" title="Gastos ${eur(byM[k].g)}"></div></div></div>`).join("");
-    $("#barlbl").innerHTML=ks.map(k=>`<span>${new Date(k+"-01").toLocaleDateString("es-ES",{month:"long"})}</span>`).join("");
-    $("#mbody").innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.fecha.split("-").reverse().join("/"))}</td><td class="name">${esc(r.concepto)}</td><td>${esc(r.categoria)}</td><td><span class="pill ${r.tipo==="Ingreso"?"p-ok":"p-can"}">${esc(r.tipo)}</span></td><td style="text-align:right;font-weight:600" class="${r.tipo==="Ingreso"?"pos":"neg"}">${r.tipo==="Ingreso"?"+":"−"}${eur(r.importe)}</td><td><button class="btn danger sm" onclick="delMov('${r.id}')">Borrar</button></td></tr>`).join(""):`<tr><td colspan="6" class="empty">Sin movimientos.</td></tr>`;
-  }catch(e){toast("Error al cargar contabilidad: "+e.message,true)}
+/* contabilidad: pagos a contado */
+const PAGO="Pago a contado";
+const norm=t=>(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+let pgClient=null;
+const hoy=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+function pgSelect(c){
+  pgClient=c;
+  $("#pgQ").value=c?c.first_name+" "+c.surname:"";
+  const sel=$("#pgSel");
+  if(c){ sel.hidden=false; sel.innerHTML=IC.ok+"<span>"+esc(c.first_name+" "+c.surname)+(c.price_per_session!=null?" · tarifa "+esc(eur(c.price_per_session))+" / sesión":"")+"</span>";
+    if(c.price_per_session!=null&&!$("#pgImp").value) $("#pgImp").value=Number(c.price_per_session).toFixed(2); }
+  else sel.hidden=true;
+  pgList(false);
 }
-async function loadActivos(){
-  try{
-    const rows=await api("/clients?select=id,first_name,surname,email,mobile_number,sessions_per_week,price_per_session&activo=eq.true&order=surname.asc,first_name.asc");
-    const dash='<span style="color:var(--muted)">—</span>';
-    $("#actbody").innerHTML=rows.length?rows.map(c=>`<tr><td class="name">${esc(c.first_name)}</td><td>${esc(c.surname)}</td><td>${c.email?`<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`:dash}</td><td>${c.mobile_number?esc(c.mobile_number):dash}</td><td class="num">${c.price_per_session!=null?esc(eur(c.price_per_session))+" / sesión"+(c.sessions_per_week!=null?`<br><small style="color:var(--muted)">${esc(c.sessions_per_week)}× por semana</small>`:""):dash}</td></tr>`).join(""):`<tr><td colspan="5" class="empty">No hay clientes activos.</td></tr>`;
-    $("#actCount").textContent=rows.length+(rows.length===1?" cliente activo":" clientes activos");
-  }catch(e){toast("Error al cargar clientes activos: "+e.message,true)}
+function pgList(show){
+  const box=$("#pgList"),q=norm($("#pgQ").value.trim());
+  if(!show){box.hidden=true;$("#pgQ").setAttribute("aria-expanded","false");return}
+  const act=clients.filter(c=>c.activo!==false);
+  const rows=act.filter(c=>!q||q.split(/\s+/).every(w=>norm(c.first_name+" "+c.surname).includes(w))).slice(0,8);
+  box.innerHTML=rows.length?rows.map(c=>`<div class="combo-it" role="option" data-id="${c.id}"><b>${esc(c.first_name)} ${esc(c.surname)}</b><small>${esc(c.mobile_number||c.email||"")}</small></div>`).join(""):'<div class="combo-no">Ningún cliente activo coincide.</div>';
+  box.hidden=false;$("#pgQ").setAttribute("aria-expanded","true");
 }
-window.delMov=async id=>{if(!confirm("¿Borrar este movimiento?"))return;try{await api("/movimientos?id=eq."+id,{method:"DELETE",...MIN});toast("Movimiento borrado");loadMov()}catch(e){toast("Error: "+e.message,true)}};
-$("#fMov").addEventListener("submit",async e=>{e.preventDefault();const d=clean(e.target);d.importe=Number(d.importe);try{await api("/movimientos",{method:"POST",...MIN,body:JSON.stringify(d)});e.target.reset();$("#fMov").fecha.value=new Date().toISOString().slice(0,10);toast("Movimiento guardado ✓");loadMov()}catch(er){toast("Error: "+er.message,true)}});
-$("#fMov").fecha.value=new Date().toISOString().slice(0,10);
+$("#pgQ").addEventListener("input",()=>{ if(pgClient){pgClient=null;$("#pgSel").hidden=true} pgList(true) });
+$("#pgQ").addEventListener("focus",()=>pgList(true));
+$("#pgQ").addEventListener("keydown",e=>{
+  if(e.key==="Escape") pgList(false);
+  if(e.key==="Enter"&&!$("#pgList").hidden){const f=$("#pgList .combo-it");if(f){e.preventDefault();pgSelect(clients.find(c=>c.id===f.dataset.id))}}
+});
+$("#pgList").addEventListener("mousedown",e=>{
+  const it=e.target.closest(".combo-it"); if(!it) return;
+  e.preventDefault(); pgSelect(clients.find(c=>c.id===it.dataset.id));
+});
+$("#pgQ").addEventListener("blur",()=>setTimeout(()=>pgList(false),120));
+async function loadPagos(){
+  try{
+    if(!clients.length) await loadClients();
+    const rows=await api("/movimientos?select=id,fecha,concepto,importe,client_id,clients(first_name,surname)&tipo=eq."+encodeURIComponent(PAGO)+"&order=fecha.desc,created_at.desc");
+    const tot=rows.reduce((t,r)=>t+Number(r.importe),0);
+    $("#pgBody").innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.fecha.split("-").reverse().join("/"))}</td><td class="name">${r.clients?esc(r.clients.first_name+" "+r.clients.surname):"—"}</td><td>${r.concepto&&r.concepto!==PAGO?esc(r.concepto):'<span style="color:var(--muted)">—</span>'}</td><td style="text-align:right;font-weight:600" class="pos">${esc(eur(r.importe))}</td><td class="act"><button type="button" class="ibtn del" onclick="delPago('${r.id}')" title="Eliminar pago" aria-label="Eliminar pago">${IC.trash}</button></td></tr>`).join(""):'<tr><td colspan="5" class="empty">Todavía no hay pagos registrados.</td></tr>';
+    $("#pgCount").textContent=rows.length?rows.length+(rows.length===1?" pago":" pagos")+" · total "+eur(tot):"";
+  }catch(e){toast("Error al cargar pagos: "+e.message,true)}
+}
+window.delPago=async id=>{
+  const ok=await askConfirm({title:"¿Eliminar este pago?",icon:"🗑️",danger:true,ok:"Sí, eliminar",html:"El pago se borrará de la lista. <b>No se puede deshacer.</b>"});
+  if(!ok) return;
+  try{await api("/movimientos?id=eq."+id,{method:"DELETE",...MIN});toast("Pago eliminado");loadPagos()}catch(e){toast("Error: "+e.message,true)}
+};
+$("#fPago").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const f=e.target,imp=Number(f.importe.value);
+  if(!pgClient) return toast("Elige un cliente de la lista",true);
+  if(!(imp>0)) return toast("Escribe un importe válido",true);
+  if(!f.fecha.value) return toast("Falta la fecha",true);
+  try{
+    await api("/movimientos",{method:"POST",...MIN,body:JSON.stringify({client_id:pgClient.id,tipo:PAGO,concepto:f.nota.value.trim()||PAGO,importe:imp,fecha:f.fecha.value})});
+    toast("Pago de "+pgClient.first_name+" guardado ✓");
+    f.reset(); pgSelect(null); $("#pgFecha").value=hoy(); loadPagos();
+  }catch(er){toast("Error: "+er.message,true)}
+});
+$("#pgFecha").value=hoy();
 
 route();
 </script>
