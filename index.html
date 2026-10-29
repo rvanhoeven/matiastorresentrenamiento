@@ -454,6 +454,13 @@
   #admin .ibtn.edit:hover{background:var(--yellow);border-color:var(--yellow);color:#000}
   #admin .ibtn.del:hover{background:var(--danger);border-color:var(--danger);color:#fff}
   #admin .ibtn+.ibtn{margin-left:6px}
+  #admin .sw{position:relative;width:42px;height:24px;border-radius:99px;border:0;background:#cfcfc8;cursor:pointer;padding:0;vertical-align:middle;transition:background .15s}
+  #admin .sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .15s}
+  #admin .sw[aria-checked="true"]{background:var(--yellow)}
+  #admin .sw[aria-checked="true"]::after{transform:translateX(18px)}
+  #admin .sw:focus-visible{outline:2px solid var(--yellow-d);outline-offset:2px}
+  #admin tr.off td:not(.act):not(.tgl){opacity:.5}
+  #admin td.tgl{text-align:center}
   #admin .bdg{margin-left:auto;background:var(--danger);color:#fff;border-radius:99px;font:600 11px 'Poppins';min-width:20px;height:20px;display:inline-grid;place-items:center;padding:0 6px}
   #admin .bdg[hidden]{display:none}
   #admin .menu button.on .bdg{background:#000;color:var(--yellow)}
@@ -1071,7 +1078,7 @@
     <div class="card sub-panel on" id="c-lista">
       <h2>Lista de clientes</h2><p class="sub">Todo lo que hay ahora mismo en la base de datos. Haz clic en un cliente para ver su ficha.</p>
       <div class="tools"><input id="q" placeholder="Buscar por nombre, teléfono, email o nota…"><button class="btn ghost" id="reload">↻ Actualizar</button><span class="count" id="ccount"></span></div>
-      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Móvil</th><th>Email</th><th>Ses./sem.</th><th>€ / sesión</th><th>Perfil / Notas</th><th></th></tr></thead><tbody id="ctbody"></tbody></table></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Móvil</th><th>Email</th><th>Ses./sem.</th><th>€ / sesión</th><th style="text-align:center">Activo</th><th>Perfil / Notas</th><th></th></tr></thead><tbody id="ctbody"></tbody></table></div>
     </div>
     <div class="card sub-panel" id="c-add">
       <h2>Añadir cliente</h2><p class="sub">Nombre y apellidos son obligatorios.</p>
@@ -1159,6 +1166,11 @@
       <h2>Ingresos y gastos por mes</h2><p class="sub">Resumen de los movimientos registrados.</p>
       <div class="bars" id="bars"></div><div class="barlbl" id="barlbl"></div>
       <div class="legend"><i style="background:var(--yellow)"></i>Ingresos<i style="background:#2b2b2b"></i>Gastos</div>
+    </div>
+    <div class="card">
+      <h2>Clientes activos</h2><p class="sub">Clientes marcados como activos y su tarifa. Para activar o desactivar a alguien, usa el interruptor en Clientes.</p>
+      <div class="tools"><span class="count" id="actCount"></span></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Apellidos</th><th>Email</th><th>Teléfono</th><th style="text-align:right">Tarifa</th></tr></thead><tbody id="actbody"></tbody></table></div>
     </div>
     <div class="card">
       <h2>Nuevo movimiento</h2><p class="sub">Registra un ingreso o un gasto.</p>
@@ -1463,7 +1475,7 @@ function openAdmin(p){
   $$("#admin .menu button").forEach(x=>x.classList.toggle("on",x.dataset.page===p));
   $$("#admin .page").forEach(x=>x.classList.toggle("on",x.id==="p-"+p));
   $("#ptitle").textContent=TITLES[p];
-  if(p==="clientes")loadClients(); if(p==="citas")loadCitas(); if(p==="solicitudes")loadSolicitudes(); if(p==="contabilidad")loadMov(); if(p==="correo")renderMail();
+  if(p==="clientes")loadClients(); if(p==="citas")loadCitas(); if(p==="solicitudes")loadSolicitudes(); if(p==="contabilidad"){loadMov();loadActivos()} if(p==="correo")renderMail();
   if(p!=="solicitudes")refreshSolBadge();
 }
 $$("#admin .menu button").forEach(b=>b.addEventListener("click",()=>{location.hash="#gestion/"+b.dataset.page}));
@@ -1482,7 +1494,7 @@ async function loadClients(){
 function renderClients(){
   const q=$("#q").value.trim().toLowerCase();
   const rows=clients.filter(c=>!q||[c.first_name,c.surname,c.mobile_number,c.email,c.profile_notes].join(" ").toLowerCase().includes(q));
-  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click" data-id="${c.id}" tabindex="0" title="Haz clic para ver la ficha"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="num">${c.sessions_per_week??"—"}</td><td class="num">${c.price_per_session!=null?eur(c.price_per_session):"—"}</td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="7" class="empty">No hay clientes que mostrar.</td></tr>`;
+  $("#ctbody").innerHTML=rows.length?rows.map(c=>`<tr class="click${c.activo===false?" off":""}" data-id="${c.id}" tabindex="0" title="Haz clic para ver la ficha"><td class="name">${esc(c.first_name)} ${esc(c.surname)}</td><td>${esc(c.mobile_number)}</td><td>${esc(c.email)}</td><td class="num">${c.sessions_per_week??"—"}</td><td class="num">${c.price_per_session!=null?eur(c.price_per_session):"—"}</td><td class="tgl"><button type="button" class="sw" role="switch" data-act="toggle" aria-checked="${c.activo!==false}" title="${c.activo!==false?"Cliente activo: clic para desactivar":"Cliente inactivo: clic para activar"}" aria-label="Activo: ${esc(c.first_name)} ${esc(c.surname)}"></button></td><td class="notes">${esc(c.profile_notes)}</td><td class="act"><button type="button" class="ibtn edit" data-act="edit" title="Editar" aria-label="Editar ${esc(c.first_name)} ${esc(c.surname)}">${IC.edit}</button><button type="button" class="ibtn del" data-act="del" title="Eliminar" aria-label="Eliminar ${esc(c.first_name)} ${esc(c.surname)}">${IC.trash}</button></td></tr>`).join(""):`<tr><td colspan="8" class="empty">No hay clientes que mostrar.</td></tr>`;
   $("#ccount").textContent=rows.length+" de "+clients.length+" clientes";
   const opts=clients.map(c=>`<option value="${c.id}">${esc(c.first_name)} ${esc(c.surname)}</option>`).join("");
   const ke=$("#selEdit").value,kc=$("#selCita").value;
@@ -1507,10 +1519,20 @@ function editClient(id){
   $("#selEdit").value=id; fillEdit();
   window.scrollTo({top:0,behavior:"smooth"}); $("#fEdit").first_name.focus();
 }
+async function toggleActivo(id){
+  const c=clients.find(x=>x.id===id); if(!c) return;
+  const nuevo=c.activo===false;
+  try{
+    await api("/clients?id=eq."+id,{method:"PATCH",...MIN,body:JSON.stringify({activo:nuevo})});
+    c.activo=nuevo; renderClients();
+    toast(c.first_name+" "+c.surname+(nuevo?" ahora está activo ✓":" ahora está inactivo"));
+  }catch(er){toast("Error: "+er.message,true)}
+}
 $("#ctbody").addEventListener("click",e=>{
   const tr=e.target.closest("tr.click"); if(!tr) return;
   const b=e.target.closest("button[data-act]");
-  if(b&&b.dataset.act==="del") askDelClient(tr.dataset.id);
+  if(b&&b.dataset.act==="toggle") toggleActivo(tr.dataset.id);
+  else if(b&&b.dataset.act==="del") askDelClient(tr.dataset.id);
   else if(b&&b.dataset.act==="edit") editClient(tr.dataset.id);
   else openClient(tr.dataset.id);
 });
@@ -1818,6 +1840,14 @@ async function loadMov(){
     $("#barlbl").innerHTML=ks.map(k=>`<span>${new Date(k+"-01").toLocaleDateString("es-ES",{month:"long"})}</span>`).join("");
     $("#mbody").innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.fecha.split("-").reverse().join("/"))}</td><td class="name">${esc(r.concepto)}</td><td>${esc(r.categoria)}</td><td><span class="pill ${r.tipo==="Ingreso"?"p-ok":"p-can"}">${esc(r.tipo)}</span></td><td style="text-align:right;font-weight:600" class="${r.tipo==="Ingreso"?"pos":"neg"}">${r.tipo==="Ingreso"?"+":"−"}${eur(r.importe)}</td><td><button class="btn danger sm" onclick="delMov('${r.id}')">Borrar</button></td></tr>`).join(""):`<tr><td colspan="6" class="empty">Sin movimientos.</td></tr>`;
   }catch(e){toast("Error al cargar contabilidad: "+e.message,true)}
+}
+async function loadActivos(){
+  try{
+    const rows=await api("/clients?select=id,first_name,surname,email,mobile_number,sessions_per_week,price_per_session&activo=eq.true&order=surname.asc,first_name.asc");
+    const dash='<span style="color:var(--muted)">—</span>';
+    $("#actbody").innerHTML=rows.length?rows.map(c=>`<tr><td class="name">${esc(c.first_name)}</td><td>${esc(c.surname)}</td><td>${c.email?`<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`:dash}</td><td>${c.mobile_number?esc(c.mobile_number):dash}</td><td class="num">${c.price_per_session!=null?esc(eur(c.price_per_session))+" / sesión"+(c.sessions_per_week!=null?`<br><small style="color:var(--muted)">${esc(c.sessions_per_week)}× por semana</small>`:""):dash}</td></tr>`).join(""):`<tr><td colspan="5" class="empty">No hay clientes activos.</td></tr>`;
+    $("#actCount").textContent=rows.length+(rows.length===1?" cliente activo":" clientes activos");
+  }catch(e){toast("Error al cargar clientes activos: "+e.message,true)}
 }
 window.delMov=async id=>{if(!confirm("¿Borrar este movimiento?"))return;try{await api("/movimientos?id=eq."+id,{method:"DELETE",...MIN});toast("Movimiento borrado");loadMov()}catch(e){toast("Error: "+e.message,true)}};
 $("#fMov").addEventListener("submit",async e=>{e.preventDefault();const d=clean(e.target);d.importe=Number(d.importe);try{await api("/movimientos",{method:"POST",...MIN,body:JSON.stringify(d)});e.target.reset();$("#fMov").fecha.value=new Date().toISOString().slice(0,10);toast("Movimiento guardado ✓");loadMov()}catch(er){toast("Error: "+er.message,true)}});
