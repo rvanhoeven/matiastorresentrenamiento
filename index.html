@@ -1590,6 +1590,7 @@ const MAIL_TPL=[
  {k:"",t:"— Mensaje en blanco —",s:"",b:""},
  {k:"rec",t:"Recordatorio de cita",s:"Recordatorio de tu sesión, {n} 💪",b:"Hola, {n}:\n\nTe escribo para recordarte tu próxima sesión. Si necesitas cambiar la hora, respóndeme a este correo o escríbeme por WhatsApp y lo vemos sin problema.\n\n¡Nos vemos pronto!\n\nUn abrazo,\nMatías Torres\nEntrenador personal · Orihuela"},
  {k:"seg",t:"Seguimiento tras la sesión",s:"¿Qué tal te has sentido, {n}?",b:"Hola, {n}:\n\n¡Buen trabajo en la sesión de hoy! Quería saber cómo te has sentido y si has notado alguna molestia. Tu opinión me ayuda a ajustar el plan a tu medida.\n\nSi tienes cualquier duda, aquí estoy.\n\nUn abrazo,\nMatías Torres\nEntrenador personal · Orihuela"},
+ {k:"otra",sol:1,t:"Proponer otra hora o día",s:"Sobre tu cita del {fecha}",b:"Hola, {n}:\n\n¡Gracias por pedir tu cita! Para el {fecha} a las {hora} no tengo hueco, pero te puedo ofrecer [día] a las [hora] o [otro día] a las [otra hora]. ¿Cuál te viene mejor? Si prefieres otro momento, dímelo y lo buscamos juntos.\n\nUn abrazo,\nMatías Torres\nEntrenador personal · Orihuela"},
  {k:"hor",t:"Cambio de horario",s:"Cambio de horario de tu sesión",b:"Hola, {n}:\n\nNecesito proponerte un pequeño cambio de horario para nuestra próxima sesión. ¿Te vendría bien [día] a las [hora]? Si no, dime qué te encaja mejor y lo organizamos.\n\n¡Gracias por tu flexibilidad!\n\nUn abrazo,\nMatías Torres\nEntrenador personal · Orihuela"},
  {k:"nue",t:"Bienvenida",s:"¡Bienvenido/a, {n}! 🎉",b:"Hola, {n}:\n\n¡Qué alegría tenerte con nosotros! Estoy deseando empezar a trabajar juntos, con calma y a tu medida. Si quieres comentarme algo antes de la primera sesión (objetivos, lesiones, horarios), respóndeme a este correo.\n\nUn abrazo,\nMatías Torres\nEntrenador personal · Orihuela"}
 ];
@@ -1597,13 +1598,20 @@ let mailClient=null;
 const mailOk=e=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e);
 function openMail(id){
   const c=clients.find(x=>x.id===id); if(!c) return;
-  mailClient=c;
-  $("#mlIc").innerHTML=IC.mail; $("#mlTitle").textContent="Email a "+c.first_name;
-  $("#mlTo").value=c.email||""; $("#mlSub").value=""; $("#mlMsg").value="";
-  $("#mlTpl").innerHTML=MAIL_TPL.map((t,i)=>`<option value="${i}">${esc(t.t)}</option>`).join("");
-  $("#mlTpl").onchange=()=>{const t=MAIL_TPL[+$("#mlTpl").value],n=c.first_name||"";$("#mlSub").value=t.s.replace(/\{n\}/g,n);$("#mlMsg").value=t.b.replace(/\{n\}/g,n)};
+  openMailTo({client_id:c.id,name:c.first_name,email:c.email||""});
+}
+function openMailTo(t){
+  mailClient=t;
+  const tpls=MAIL_TPL.filter(x=>!x.sol||t.fecha);
+  const sub=(x)=>x.replace(/\{n\}/g,t.name||"").replace(/\{fecha\}/g,(t.fecha||"").toLowerCase()).replace(/\{hora\}/g,t.hora||"");
+  $("#mlIc").innerHTML=IC.mail; $("#mlTitle").textContent="Email a "+(t.name||"");
+  $("#mlTo").value=t.email||""; $("#mlSub").value=""; $("#mlMsg").value="";
+  $("#mlTpl").innerHTML=tpls.map((x,i)=>`<option value="${i}">${esc(x.t)}</option>`).join("");
+  const fill=()=>{const x=tpls[+$("#mlTpl").value];$("#mlSub").value=sub(x.s);$("#mlMsg").value=sub(x.b)};
+  $("#mlTpl").onchange=fill;
+  if(t.fecha){ $("#mlTpl").value=String(tpls.findIndex(x=>x.k==="otra")); fill() }
   $("#mlCancel").onclick=()=>$("#d-mail").close();
-  $("#d-mail").showModal(); (c.email?$("#mlSub"):$("#mlTo")).focus();
+  $("#d-mail").showModal(); (t.email?$("#mlSub"):$("#mlTo")).focus();
 }
 async function sendCorreo(id){
   try{
@@ -1621,15 +1629,15 @@ $("#fMail").addEventListener("submit",async e=>{
   const btn=$("#mlSend"); btn.disabled=true; btn.textContent="Enviando…";
   const c=mailClient;
   try{
-    const rows=await api("/correos",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify({client_id:c.id,destinatario:to,asunto:sub,mensaje:msg})});
+    const rows=await api("/correos",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify({client_id:c.client_id||null,destinatario:to,asunto:sub,mensaje:msg})});
     $("#d-mail").close();
     const res=await sendCorreo(rows[0].id);
     if(res&&res.sent) toast("Email enviado a "+to+" ✓");
     else if(res&&res.reason==="provider_error") toast("Guardado, pero Gmail no lo pudo enviar. Puedes reintentarlo desde la ficha.",true);
-    else toast("Email guardado en la ficha. El envío por Gmail aún no está conectado.");
+    else toast("Email guardado. El envío por Gmail aún no está conectado.");
   }catch(err){toast("No se pudo guardar el email",true)}
   finally{btn.disabled=false;btn.textContent="Enviar email"}
-  if($("#d-client").open&&$("#d-client").dataset.id===c.id) loadClMails(c.id);
+  if(c.client_id&&$("#d-client").open&&$("#d-client").dataset.id===c.client_id) loadClMails(c.client_id);
 });
 async function loadClMails(id){
   const box=$("#clMails"); if(!box) return;
@@ -1706,8 +1714,8 @@ function renderSols(){
     const pill=pen?'<span class="pill p-pen">⏳ Pendiente</span>':conf?'<span class="pill p-ok">✔ Confirmada</span>':'<span class="pill p-done">✖ '+esc(s.estado)+' · resuelta</span>';
     const sent=conf?(s.confirmacion_enviada_at?`<span class="sent">${IC.mail} Email enviado</span>`:'<span class="sent" style="color:#8a6a00">'+IC.mail+' Email sin enviar</span>'):"";
     const acts=pen
-      ?`<button class="abtn ok" data-a="ok" title="Confirmar cita y enviar email">${IC.ok}Confirmar</button><button class="abtn no" data-a="no" title="Rechazar (queda como resuelta)">${IC.no}Rechazar</button><button class="abtn del" data-a="del" title="Eliminar solicitud">${IC.trash}Eliminar</button>`
-      :`${conf?`<button class="abtn resend" data-a="mail" title="Enviar de nuevo el email de confirmación">${IC.mail}${s.confirmacion_enviada_at?"Reenviar email":"Enviar email"}</button>`:""}<button class="abtn del" data-a="del" title="Eliminar solicitud">${IC.trash}Eliminar</button>`;
+      ?`<button class="abtn resend" data-a="write" title="Escribir un email a esta persona (p. ej. proponer otra hora)">${IC.mail}Email</button><button class="abtn ok" data-a="ok" title="Confirmar cita y enviar email">${IC.ok}Confirmar</button><button class="abtn no" data-a="no" title="Rechazar (queda como resuelta)">${IC.no}Rechazar</button><button class="abtn del" data-a="del" title="Eliminar solicitud">${IC.trash}Eliminar</button>`
+      :`<button class="abtn resend" data-a="write" title="Escribir un email a esta persona">${IC.mail}Email</button>${conf?`<button class="abtn resend" data-a="mail" title="Enviar de nuevo el email de confirmación">${IC.mail}${s.confirmacion_enviada_at?"Reenviar email":"Enviar email"}</button>`:""}<button class="abtn del" data-a="del" title="Eliminar solicitud">${IC.trash}Eliminar</button>`;
     return `<div class="sol st-${esc(s.estado)}" data-id="${s.id}">
       <div class="sol-main">
         <div class="sol-top"><span class="sol-name">${esc(s.nombre)}</span>${pill}${sent}</div>
@@ -1731,7 +1739,7 @@ $("#solChips").addEventListener("click",e=>{
 $("#sollist").addEventListener("click",e=>{
   const b=e.target.closest("button[data-a]"); if(!b) return;
   const id=b.closest(".sol").dataset.id, a=b.dataset.a;
-  if(a==="ok") solConfirmar(id); else if(a==="no") solRechazar(id); else if(a==="del") solEliminar(id); else if(a==="mail") solEmail(id,true);
+  if(a==="ok") solConfirmar(id); else if(a==="no") solRechazar(id); else if(a==="del") solEliminar(id); else if(a==="mail") solEmail(id,true); else if(a==="write"){const s=sols.find(x=>x.id===id); if(s) openMailTo({client_id:s.client_id,name:s.nombre.trim().split(/\s+/)[0],email:s.email,fecha:fFecha(s.inicio),hora:fHora(s.inicio)})}
 });
 
 /* mensaje estándar de confirmación (informal, alegre y profesional) */
