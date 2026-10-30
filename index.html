@@ -560,6 +560,14 @@
   #d-confirm .dc-row{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap}
   #d-confirm .btn.danger{background:var(--danger);color:#fff}
   #d-confirm .btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  .cookiebar{position:fixed;left:16px;right:16px;bottom:16px;z-index:90;max-width:760px;margin:0 auto;background:var(--black);color:#fff;border:1px solid #333;border-left:5px solid var(--yellow);border-radius:12px;padding:14px 18px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+  .cookiebar[hidden]{display:none}
+  .cookiebar p{margin:0;font-size:13.5px;line-height:1.5;color:#e6e6df;flex:1 1 280px}
+  .cookiebar a{color:var(--yellow)}
+  .cookiebar .btn{padding:10px 16px;font-size:12.5px}
+  .cookiebar .btn.ghost{background:transparent;color:#fff;border:1.5px solid #666}
+  .cookiebar .btn.ghost:hover{background:#222}
+  .cookiebar div{display:flex;gap:8px;flex-wrap:wrap}
   .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;border-left:5px solid var(--ok);opacity:0;pointer-events:none;transition:.25s;z-index:99}
   .toast.show{opacity:1}.toast.err{border-left-color:var(--danger)}
 
@@ -1049,9 +1057,10 @@
 </div></footer>
 
 <dialog id="d-img" class="lb"><img id="lbImg" alt=""><button type="button" aria-label="Cerrar" id="lbX">×</button></dialog>
+<div class="cookiebar" id="cookieBar" role="region" aria-label="Cookies" hidden><p>Usamos Instagram para mostrarte nuestras últimas publicaciones; Instagram (Meta) puede instalar cookies. ¿Las aceptas? <a href="#" data-dlg="d-cook">Más información</a></p><div><button type="button" class="btn ghost" id="ckNo">Solo necesarias</button><button type="button" class="btn" id="ckOk">Aceptar</button></div></div>
 <dialog id="d-legal"><h3>Aviso legal</h3><p>Texto de ejemplo. Aquí irían los datos del titular (nombre, NIF, domicilio y contacto) y las condiciones de uso del sitio, conforme a la normativa vigente.</p><p><button class="btn" onclick="this.closest('dialog').close()">Cerrar</button></p></dialog>
 <dialog id="d-priv"><h3>Política de privacidad</h3><p>Texto de ejemplo. Como el centro trata datos de salud, aquí debe explicarse qué datos se recogen, para qué, base legal (consentimiento), plazo de conservación y cómo ejercer los derechos de acceso, rectificación y supresión. Conviene que lo redacte un profesional.</p><p><button class="btn" onclick="this.closest('dialog').close()">Cerrar</button></p></dialog>
-<dialog id="d-cook"><h3>Política de cookies</h3><p>Texto de ejemplo. Esta web no usa cookies de seguimiento. Las publicaciones de Instagram solo se cargan si pulsas «Ver publicaciones»; en ese momento Instagram (Meta) puede instalar sus propias cookies. Un profesional debe revisar este texto antes de publicar.</p><p><button class="btn" onclick="this.closest('dialog').close()">Cerrar</button></p></dialog>
+<dialog id="d-cook"><h3>Política de cookies</h3><p>Texto de ejemplo. Esta web no usa cookies de seguimiento propias. Si las aceptas, las últimas publicaciones de Instagram se cargan automáticamente y Instagram (Meta) puede instalar sus propias cookies; si no, solo se cargan cuando pulsas «Ver publicaciones». Un profesional debe revisar este texto antes de publicar.</p><p><button class="btn" type="button" id="ckChange">Cambiar mi elección</button> <button class="btn ghost" type="button" onclick="this.closest('dialog').close()">Cerrar</button></p></dialog>
 </div>
 
 <!-- ============ ACCESO OBLIGATORIO A GESTIÓN ============ -->
@@ -1352,11 +1361,20 @@ $("#logoutBtn").addEventListener("click",()=>{
 $("#burger").onclick=()=>$("#nav").classList.toggle("open");
 $$("[data-dlg]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();document.getElementById(a.dataset.dlg).showModal()}));
 
-/* ============ instagram (se carga solo tras un clic) ============ */
-$("#igLoad").addEventListener("click",()=>{
-  const box=$("#igBox"); box.classList.remove("ig-wait");
+/* ============ instagram: automático si se aceptan las cookies; si no, tras un clic ============ */
+const CK="mtCookiesIG";
+const ckGet=()=>{try{return localStorage.getItem(CK)}catch(_){return null}};
+const ckSet=v=>{try{v?localStorage.setItem(CK,v):localStorage.removeItem(CK)}catch(_){}};
+function loadIG(){
+  const box=$("#igBox"); if(box.querySelector("iframe")) return;
+  box.classList.remove("ig-wait");
   box.innerHTML='<iframe src="https://www.instagram.com/matiastorresep/embed/" title="Instagram @matiastorresep" loading="lazy" scrolling="yes"></iframe>';
-});
+}
+$("#igLoad").addEventListener("click",loadIG);
+$("#ckOk").addEventListener("click",()=>{ckSet("ok");$("#cookieBar").hidden=true;loadIG()});
+$("#ckNo").addEventListener("click",()=>{ckSet("no");$("#cookieBar").hidden=true});
+$("#ckChange").addEventListener("click",()=>{ckSet(null);$("#d-cook").close();location.reload()});
+if(ckGet()==="ok") loadIG(); else if(ckGet()!=="no") $("#cookieBar").hidden=false;
 
 /* ============ formulario de contacto ============ */
 $("#fContact").addEventListener("submit",async e=>{
