@@ -485,7 +485,11 @@
   #admin .solchips button.on .n{background:var(--yellow);color:#000}
   #admin .solchips button.on{background:var(--black);border-color:var(--black);color:var(--yellow);font-weight:600}
   #admin .sol{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:16px 18px;border:1px solid var(--line);border-left:5px solid var(--yellow);border-radius:12px;background:#fff;margin-bottom:12px;transition:.15s}
-  #admin .sol:hover{background:#fffbe6}
+  #admin .sol:hover{background:#ffe97a;border-color:#e0b400;border-left-color:#000;box-shadow:0 6px 18px rgba(0,0,0,.14);transform:translateY(-1px)}
+  #admin .sol:hover .sol-msg{background:#fff;border-left-color:#000}
+  #admin .sol:hover .sol-meta{color:#3a3a36}
+  #admin .sol.st-Confirmada:hover{background:#c9f0d9;border-color:#2e9e5b;border-left-color:#157a42}
+  #admin .sol.st-Rechazada:hover,#admin .sol.st-Cancelada:hover{background:#e4e4de;border-color:#a9a9a0;border-left-color:#6b6b66}
   #admin .sol.st-Confirmada{border-left-color:var(--ok)}
   #admin .sol.st-Rechazada,#admin .sol.st-Cancelada{border-left-color:#bdbdb5;background:#f7f7f4}
   #admin .sol.st-Rechazada .sol-name,#admin .sol.st-Cancelada .sol-name{color:#6b6b66}
@@ -497,13 +501,14 @@
   #admin .sol-meta svg{width:14px;height:14px;flex:none}
   #admin .sol-meta .when{color:var(--ink);font-weight:600}
   #admin .sol-msg{margin-top:8px;font-size:13.5px;background:#faf9f4;border-left:3px solid var(--yellow);padding:6px 10px;border-radius:0 8px 8px 0;color:#444}
-  #admin .sol-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  #admin .abtn{display:inline-flex;align-items:center;gap:7px;border:0;border-radius:9px;padding:9px 14px;font:600 12.5px 'Poppins';cursor:pointer;transition:.15s;white-space:nowrap}
-  #admin .abtn svg{width:16px;height:16px;flex:none}
-  #admin .abtn.ok{background:var(--ok);color:#fff}#admin .abtn.ok:hover{background:#17803f}
-  #admin .abtn.no{background:#fff;color:#8a5a00;border:1.5px solid #e6c36a}#admin .abtn.no:hover{background:#fff2c2}
-  #admin .abtn.del{background:#fff;color:var(--danger);border:1.5px solid #f0b5b5}#admin .abtn.del:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
-  #admin .abtn.resend{background:#fff;color:#333;border:1.5px solid var(--line)}#admin .abtn.resend:hover{background:var(--yellow);border-color:var(--yellow)}
+  #admin .sol-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  #admin .abtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:7px;padding:5px 10px;font:500 11.5px 'Poppins';cursor:pointer;transition:.15s;white-space:nowrap;background:#fff;color:#6b6b66}
+  #admin .abtn svg{width:13px;height:13px;flex:none}
+  #admin .abtn:hover{color:#000}
+  #admin .abtn.ok:hover{background:var(--ok);border-color:var(--ok);color:#fff}
+  #admin .abtn.no:hover{background:#fff2c2;border-color:#e6c36a;color:#8a5a00}
+  #admin .abtn.del:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+  #admin .abtn.resend:hover{background:var(--yellow);border-color:var(--yellow);color:#000}
   #admin .sent{font-size:12px;color:#157a42;display:inline-flex;align-items:center;gap:5px}
   #admin .sent svg{width:14px;height:14px;flex:none}
   #admin .p-done{background:#e9e9e4;color:#555}
